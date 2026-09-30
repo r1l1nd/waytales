@@ -1,5 +1,5 @@
-import { View, Text, Button, StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
+import { Button, StyleSheet, Text, View } from 'react-native';
 
 export default function HomeScreen() {
   const router = useRouter();
@@ -10,7 +10,7 @@ export default function HomeScreen() {
       <Button
         title="Zur Detailansicht"
         onPress={() => {
-          // Platzhalter
+          router.push('/story-detail')
         }}
       />
     </View>
