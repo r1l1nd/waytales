@@ -1,16 +1,23 @@
-import { Button, Text, View } from 'react-native';
-import { STORY_STYLES } from '../src/constants/styles';
-import { useSettingsStore } from '../src/store/useSettingsStore';
+import { useRouter } from 'expo-router';
+import { Button, StyleSheet, Text, View } from 'react-native';
 
 export default function HomeScreen() {
-  const { style, setStyle } = useSettingsStore();
+  const router = useRouter();
 
   return (
-    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', gap: 12 }}>
-      <Text style={{ fontSize: 20 }}>Aktueller Stil: {style}</Text>
-      {STORY_STYLES.map((s) => (
-        <Button key={s} title={s} onPress={() => setStyle(s)} />
-      ))}
+    <View style={styles.container}>
+      <Text style={styles.title}>WayTales</Text>
+      <Button
+        title="Zur Detailansicht"
+        onPress={() => {
+          router.push('/story-detail')
+        }}
+      />
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: { flex: 1, alignItems: 'center', justifyContent: 'center' },
+  title: { fontSize: 24, marginBottom: 16 },
+});
