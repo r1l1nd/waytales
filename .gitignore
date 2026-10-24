@@ -44,3 +44,5 @@ example
 
 # Custom local environment configuration
 .env
+# Lokale Claude-Anweisungen (nicht committen)
+CLAUDE.md
