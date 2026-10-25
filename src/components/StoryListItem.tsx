@@ -1,20 +1,13 @@
 import { Pressable, StyleSheet, Text } from 'react-native';
 import { COLORS } from '../constants/colors';
 import type { Story } from '../models';
+import { formatDate } from '../utils/formatDate';
 
 // welche Parameter (Props) StoryListItem von der übergeordneten Komponente erhalten muss
 type StoryListItemProps = {
   story: Story;
   onPress: () => void;
 };
-
-function formatDate(isoDate: string) {
-  return new Date(isoDate).toLocaleDateString('de-AT', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric',
-  });
-}
 
 // Eine Zeile in der Liste der gespeicherten Geschichten.
 export function StoryListItem({ story, onPress }: StoryListItemProps) {
