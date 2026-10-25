@@ -3,6 +3,7 @@ import { SymbolView } from 'expo-symbols';
 import { ActivityIndicator, Alert, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { COLORS } from '../constants/colors';
 import { useSavedStories } from '../hooks/useSavedStories';
+import { openInMaps } from '../services/mapService';
 import { useStoryStore } from '../store/useStoryStore';
 import { formatDate } from '../utils/formatDate';
 
@@ -43,6 +44,18 @@ export default function StoryDetailScreen() {
     ]);
   };
 
+  const openMap = async () => {
+    try {
+      await openInMaps({
+        latitude: story.latitude,
+        longitude: story.longitude,
+        name: story.locationName,
+      });
+    } catch {
+      Alert.alert('Karten-App nicht verfügbar', 'Auf diesem Gerät wurde keine Karten-App gefunden.');
+    }
+  };
+
   return (
     <>
       <Stack.Screen
@@ -69,6 +82,18 @@ export default function StoryDetailScreen() {
         <Text style={styles.meta}>
           {story.style} · {formatDate(story.createdAt)}
         </Text>
+        <Pressable
+          onPress={openMap}
+          accessibilityRole="link"
+          style={({ pressed }) => [styles.mapButton, pressed && styles.pressed]}
+        >
+          <SymbolView
+            name={{ ios: 'map', android: 'map', web: 'map' }}
+            size={18}
+            tintColor={COLORS.primary}
+          />
+          <Text style={styles.mapText}>Karte öffnen</Text>
+        </Pressable>
         <Text style={styles.text}>{story.content}</Text>
       </ScrollView>
     </>
@@ -85,4 +110,16 @@ const styles = StyleSheet.create({
   text: { marginTop: 16, fontSize: 16, lineHeight: 24, color: COLORS.text },
   deleteButton: { width: 44, height: 44, alignItems: 'center', justifyContent: 'center' },
   pressed: { opacity: 0.6 },
+  mapButton: {
+    marginTop: 16,
+    minHeight: 48,
+    paddingHorizontal: 16,
+    borderRadius: 24,
+    backgroundColor: COLORS.primaryLight,
+    flexDirection: 'row',
+    alignItems: 'center',
+    alignSelf: 'flex-start',
+    gap: 8,
+  },
+  mapText: { fontSize: 16, fontWeight: '500', color: COLORS.primary },
 });
