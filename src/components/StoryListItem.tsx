@@ -1,0 +1,47 @@
+import { Pressable, StyleSheet, Text } from 'react-native';
+import { COLORS } from '../constants/colors';
+import type { Story } from '../models';
+
+// welche Parameter (Props) StoryListItem von der übergeordneten Komponente erhalten muss
+type StoryListItemProps = {
+  story: Story;
+  onPress: () => void;
+};
+
+function formatDate(isoDate: string) {
+  return new Date(isoDate).toLocaleDateString('de-AT', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+  });
+}
+
+// Eine Zeile in der Liste der gespeicherten Geschichten.
+export function StoryListItem({ story, onPress }: StoryListItemProps) {
+  return (
+    <Pressable
+      onPress={onPress}
+      accessibilityRole="button"
+      style={({ pressed }) => [styles.row, pressed && styles.pressed]}
+    >
+      <Text style={styles.title}>{story.title}</Text>
+      <Text style={styles.location}>{story.locationName}</Text>
+      <Text style={styles.meta}>
+        {story.style} · {formatDate(story.createdAt)}
+      </Text>
+    </Pressable>
+  );
+}
+
+const styles = StyleSheet.create({
+  row: {
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: COLORS.border,
+  },
+  pressed: { backgroundColor: COLORS.primaryLight },
+  title: { fontSize: 16, fontWeight: '600', color: COLORS.text },
+  location: { marginTop: 2, fontSize: 14, color: COLORS.textMuted },
+  meta: { marginTop: 2, fontSize: 13, color: COLORS.textMuted },
+});

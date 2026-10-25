@@ -1,10 +1,13 @@
+import { useRouter } from 'expo-router';
 import { ActivityIndicator, FlatList, StyleSheet, Text, View } from 'react-native';
 import { OfflineBanner } from '../../components/OfflineBanner';
+import { StoryListItem } from '../../components/StoryListItem';
 import { COLORS } from '../../constants/colors';
 import { MOCK_STORIES, USE_MOCK_STORIES } from '../../constants/mockStories';
 import { useStoryStore } from '../../store/useStoryStore';
 
 export default function SavedScreen() {
+  const router = useRouter();
   const storedStories = useStoryStore((state) => state.stories);
   const hasHydrated = useStoryStore((state) => state.hasHydrated);
 
@@ -33,7 +36,12 @@ export default function SavedScreen() {
       <FlatList
         data={stories}
         keyExtractor={(story) => story.id}
-        renderItem={({ item }) => <Text style={styles.row}>{item.title}</Text>}
+        renderItem={({ item }) => (
+          <StoryListItem
+            story={item}
+            onPress={() => router.push(`/story-detail?id=${encodeURIComponent(item.id)}`)}
+          />
+        )}
       />
     );
   }
@@ -50,5 +58,4 @@ const styles = StyleSheet.create({
   screen: { flex: 1 },
   centered: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 16 },
   emptyText: { fontSize: 16, color: COLORS.textMuted, textAlign: 'center' },
-  row: { padding: 16, fontSize: 16, color: COLORS.text },
 });
