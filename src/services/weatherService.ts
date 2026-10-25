@@ -1,3 +1,4 @@
+import type { Weather } from '../models';
 import { createHttpClient } from './httpClient';
 
 const geocodingUrl = process.env.EXPO_PUBLIC_GEOCODING_API_URL;
@@ -68,6 +69,7 @@ type ForecastResponse = {
 
 // Holt die Tageswerte für einen Zeitraum (Datum als yyyy-mm-dd). Niederschlag in mm, Temperatur in °C.
 export async function getForecast({
+  // Destructuring: Eigenschaften direkt aus Objekt herausgeholt -> Variablen
   latitude,
   longitude,
   startDate,
@@ -96,4 +98,38 @@ export async function getForecast({
     precipitation: daily.precipitation_sum[index],
     weatherCode: daily.weather_code[index],
   }));
+}
+
+// Liefert den Wettercode, der am häufigsten vorkommt. Bei Gleichstand gewinnt der höhere (schlechtere) Code.
+function mostFrequentCode(codes: number[]): number {
+  const counts = new Map<number, number>();
+  for (const code of codes) {
+    counts.set(code, (counts.get(code) ?? 0) + 1);
+  }
+
+  let best = codes[0];
+  for (const [code, count] of counts) {
+    const bestCount = counts.get(best) ?? 0;
+    if (count > bestCount || (count === bestCount && code > best)) best = code;
+  }
+  return best;
+}
+
+// Verdichtet die Tageswerte zu einem Wetter für die ganze Reise
+export function summarizeForecast(days: DailyForecast[], destination: string): Weather | null {
+  if (days.length === 0) return null;
+
+  const dailyMeans = days.map((day) => (day.temperatureMax + day.temperatureMin) / 2);
+  const averageTemperature = dailyMeans.reduce((sum, mean) => sum + mean, 0) / days.length;
+  const totalPrecipitation = days.reduce((sum, day) => sum + day.precipitation, 0);
+  const firstDate = days[0].date;
+  const lastDate = days[days.length - 1].date;
+
+  return {
+    destination,
+    dateRange: firstDate === lastDate ? firstDate : `${firstDate} bis ${lastDate}`,
+    temperature: Math.round(averageTemperature),
+    precipitation: Math.round(totalPrecipitation * 10) / 10,
+    conditionCode: mostFrequentCode(days.map((day) => day.weatherCode)),
+  };
 }
