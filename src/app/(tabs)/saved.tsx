@@ -3,17 +3,11 @@ import { ActivityIndicator, FlatList, StyleSheet, Text, View } from 'react-nativ
 import { OfflineBanner } from '../../components/OfflineBanner';
 import { StoryListItem } from '../../components/StoryListItem';
 import { COLORS } from '../../constants/colors';
-import { MOCK_STORIES, USE_MOCK_STORIES } from '../../constants/mockStories';
-import { useStoryStore } from '../../store/useStoryStore';
+import { useSavedStories } from '../../hooks/useSavedStories';
 
 export default function SavedScreen() {
   const router = useRouter();
-  const storedStories = useStoryStore((state) => state.stories);
-  const hasHydrated = useStoryStore((state) => state.hasHydrated);
-
-  // FAKE-DATEN: Solange USE_MOCK_STORIES true ist, zeigen wir Beispielgeschichten.
-  // Später entfällt das, dann kommen die Geschichten nur noch aus dem Store.
-  const stories = USE_MOCK_STORIES ? MOCK_STORIES : storedStories;
+  const { stories, hasHydrated } = useSavedStories();
 
   function renderContent() {
     if (!hasHydrated) {
