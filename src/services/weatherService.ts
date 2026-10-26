@@ -100,6 +100,24 @@ export async function getForecast({
   }));
 }
 
+// Open-Meteo liefert höchstens 16 Tage Vorhersage
+const MAX_FORECAST_DAYS = 16;
+
+function toIsoDate(date: Date) {
+  // .padStart(2, '0') ergänzt vorne eine 0, wenn der Text kürzer als zwei Zeichen ist.
+  // Beispiel: Aus dem Monat 3 wird "03".
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${date.getFullYear()}-${month}-${day}`;
+}
+
+// Prüft, ob das Reiseende (yyyy-mm-dd) noch innerhalb der möglichen Vorhersage liegt.
+export function isWithinForecastRange(endDate: string, today = new Date()): boolean {
+  const lastDay = new Date(today);
+  lastDay.setDate(lastDay.getDate() + MAX_FORECAST_DAYS - 1);
+  return endDate <= toIsoDate(lastDay);
+}
+
 // Liefert den Wettercode, der am häufigsten vorkommt. Bei Gleichstand gewinnt der höhere (schlechtere) Code.
 function mostFrequentCode(codes: number[]): number {
   const counts = new Map<number, number>();
