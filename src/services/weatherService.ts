@@ -1,3 +1,4 @@
+import { MOCK_DAYS, MOCK_PLACE, USE_MOCK_WEATHER } from '../constants/mockWeather';
 import type { Weather } from '../models';
 import { createHttpClient } from './httpClient';
 
@@ -20,12 +21,14 @@ type GeocodingResponse = {
 
 // Sucht einen Ort und liefert den besten Treffer, oder null, wenn nichts gefunden wurde.
 export async function geocodePlace(query: string): Promise<GeocodedPlace | null> {
+  const name = query.trim();
+  if (name.length < 2) return null;
+
+  if (USE_MOCK_WEATHER) return { name, ...MOCK_PLACE };
+
   if (!geocodingClient) {
     throw new Error('EXPO_PUBLIC_GEOCODING_API_URL fehlt in der .env');
   }
-
-  const name = query.trim();
-  if (name.length < 2) return null;
 
   const { data } = await geocodingClient.get<GeocodingResponse>('/search', {
     params: { name, count: 1, language: 'de', format: 'json' },
@@ -75,6 +78,8 @@ export async function getForecast({
   startDate,
   endDate,
 }: ForecastRequest): Promise<DailyForecast[]> {
+  if (USE_MOCK_WEATHER) return createMockForecast(startDate, endDate);
+
   if (!forecastClient) {
     throw new Error('EXPO_PUBLIC_FORECAST_API_URL fehlt in der .env');
   }
@@ -102,6 +107,27 @@ export async function getForecast({
 
 // Open-Meteo liefert höchstens 16 Tage Vorhersage
 const MAX_FORECAST_DAYS = 16;
+
+// Alle Tage von start bis end (yyyy-mm-dd), höchstens so viele, wie die Vorhersage hergibt.
+function datesBetween(startDate: string, endDate: string): string[] {
+  const dates: string[] = [];
+  const current = new Date(`${startDate}T00:00:00Z`);
+  const last = new Date(`${endDate}T00:00:00Z`);
+
+  while (current <= last && dates.length < MAX_FORECAST_DAYS) {
+    dates.push(current.toISOString().slice(0, 10));
+    current.setUTCDate(current.getUTCDate() + 1);
+  }
+  return dates;
+}
+
+// FAKE-DATEN: Ein Beispieltag pro angefragtem Datum, die Werte wiederholen sich der Reihe nach.
+function createMockForecast(startDate: string, endDate: string): DailyForecast[] {
+  return datesBetween(startDate, endDate).map((date, index) => ({
+    date,
+    ...MOCK_DAYS[index % MOCK_DAYS.length],
+  }));
+}
 
 function toIsoDate(date: Date) {
   // .padStart(2, '0') ergänzt vorne eine 0, wenn der Text kürzer als zwei Zeichen ist.
