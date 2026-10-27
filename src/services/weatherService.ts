@@ -1,4 +1,5 @@
-import { MOCK_DAYS, MOCK_PLACE, USE_MOCK_WEATHER } from '../constants/mockWeather';
+import { createMockForecast, MOCK_PLACE, USE_MOCK_WEATHER } from '../constants/mockWeather';
+import { MAX_FORECAST_DAYS } from '../constants/weather';
 import type { Weather } from '../models';
 import { createHttpClient } from './httpClient';
 
@@ -102,30 +103,6 @@ export async function getForecast({
     temperatureMin: daily.temperature_2m_min[index],
     precipitation: daily.precipitation_sum[index],
     weatherCode: daily.weather_code[index],
-  }));
-}
-
-// Open-Meteo liefert höchstens 16 Tage Vorhersage
-const MAX_FORECAST_DAYS = 16;
-
-// Alle Tage von start bis end (yyyy-mm-dd), höchstens so viele, wie die Vorhersage hergibt.
-function datesBetween(startDate: string, endDate: string): string[] {
-  const dates: string[] = [];
-  const current = new Date(`${startDate}T00:00:00Z`);
-  const last = new Date(`${endDate}T00:00:00Z`);
-
-  while (current <= last && dates.length < MAX_FORECAST_DAYS) {
-    dates.push(current.toISOString().slice(0, 10));
-    current.setUTCDate(current.getUTCDate() + 1);
-  }
-  return dates;
-}
-
-// FAKE-DATEN: Ein Beispieltag pro angefragtem Datum, die Werte wiederholen sich der Reihe nach.
-function createMockForecast(startDate: string, endDate: string): DailyForecast[] {
-  return datesBetween(startDate, endDate).map((date, index) => ({
-    date,
-    ...MOCK_DAYS[index % MOCK_DAYS.length],
   }));
 }
 
