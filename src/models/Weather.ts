@@ -1,5 +1,5 @@
 export interface Weather {
-    destionation: string;
+    destination: string;
     dateRange: string;
     temperature: number;
     precipitation: number;
