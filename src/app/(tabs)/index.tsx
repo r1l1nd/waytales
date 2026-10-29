@@ -1,36 +1,70 @@
-import { useRouter } from 'expo-router';
-import { ActivityIndicator, Button, StyleSheet, Text, View } from 'react-native';
+import { SymbolView } from 'expo-symbols';
+import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
 import { OfflineBanner } from '../../components/OfflineBanner';
+import { StyleDropdown } from '../../components/StyleDropdown';
 import { COLORS } from '../../constants/colors';
 import { useLocation } from '../../hooks/useLocation';
+import { useSettingsStore } from '../../store/useSettingsStore';
 
 export default function HomeScreen() {
-  const router = useRouter();
   const { place, isLoading, error, fetchLocation } = useLocation();
+  const style = useSettingsStore((state) => state.style);
+  const setStyle = useSettingsStore((state) => state.setStyle);
 
   return (
     <View style={styles.screen}>
       <OfflineBanner />
       <View style={styles.container}>
-        <Text style={styles.title}>WayTales</Text>
+        <Text style={styles.location}>
+          {place ? `Standort: ${place.locationName}` : 'Standort noch unbekannt'}
+        </Text>
 
-        <Button title="Standort ermitteln" onPress={fetchLocation} disabled={isLoading} />
-        {isLoading && <ActivityIndicator style={styles.spacing} />}
-        {place && <Text style={styles.spacing}>Standort: {place.locationName}</Text>}
-        {error && <Text style={[styles.spacing, styles.error]}>{error}</Text>}
+        <Pressable
+          style={({ pressed }) => [styles.gpsButton, pressed && styles.gpsButtonPressed]}
+          onPress={fetchLocation}
+          disabled={isLoading}
+          accessibilityRole="button"
+          accessibilityLabel="Standort ermitteln"
+        >
+          {isLoading ? (
+            <ActivityIndicator size="large" color={COLORS.primary} />
+          ) : (
+            <SymbolView
+              name={{ ios: 'location.fill', android: 'location_on', web: 'location_on' }}
+              size={64}
+              tintColor={COLORS.primary}
+            />
+          )}
+        </Pressable>
 
-        <View style={styles.spacing}>
-          <Button title="Zur Detailansicht" onPress={() => router.push('/story-detail')} />
-        </View>
+        {error && <Text style={styles.error}>{error}</Text>}
+
+        <StyleDropdown value={style} onChange={setStyle} />
       </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  screen: { flex: 1 },
-  container: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 16 },
-  title: { fontSize: 24, marginBottom: 16 },
-  spacing: { marginTop: 16 },
+  screen: { flex: 1, backgroundColor: COLORS.background },
+  container: {
+    flex: 1,
+    alignItems: 'center',
+    paddingTop: 48,
+    paddingHorizontal: 16,
+    gap: 32,
+  },
+  location: { fontSize: 16, color: COLORS.text, textAlign: 'center' },
+  gpsButton: {
+    width: 180,
+    height: 180,
+    borderRadius: 90,
+    borderWidth: 3,
+    borderColor: COLORS.primary,
+    backgroundColor: COLORS.primaryLight,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  gpsButtonPressed: { opacity: 0.7 },
   error: { color: COLORS.error, textAlign: 'center' },
 });
