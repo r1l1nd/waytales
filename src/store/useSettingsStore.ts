@@ -1,7 +1,7 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { create } from 'zustand';
-import { createJSONStorage, persist } from 'zustand/middleware';
+import { persist } from 'zustand/middleware';
 import { DEFAULT_STYLE, type StoryStyle } from '../constants/styles';
+import { createStorage } from '../services/storageService';
 
 // Store = der gewählte Stil und Funktion, um ihn zu ändern.
 type SettingsState = {
@@ -17,7 +17,7 @@ export const useSettingsStore = create<SettingsState>()(
     }),
     {
       name: 'settings-storage',
-      storage: createJSONStorage(() => AsyncStorage),
+      storage: createStorage<SettingsState>(),
     }
   )
 );
