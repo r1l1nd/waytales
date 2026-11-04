@@ -1,3 +1,4 @@
+import { isAxiosError } from 'axios';
 import { AiError } from '../services/aiService';
 import { LocationPermissionError } from '../services/locationService';
 
@@ -20,5 +21,10 @@ export function getErrorMessage(error: unknown): string {
         return 'Gemini hat einen Fehler gemeldet. Bitte versuche es später erneut.';
     }
   }
+
+  if (isAxiosError(error)) {
+    return 'Keine Verbindung zum Wetterdienst. Prüfe dein Internet und versuche es erneut.';
+  }
+
   return 'Etwas ist schiefgelaufen. Bitte versuche es erneut.';
 }
