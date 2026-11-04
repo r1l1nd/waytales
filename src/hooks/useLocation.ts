@@ -1,6 +1,7 @@
 import { useCallback, useState } from 'react';
 import type { Place } from '../models';
-import { getCurrentPlace, LocationPermissionError } from '../services/locationService';
+import { getCurrentPlace } from '../services/locationService';
+import { getErrorMessage } from '../utils/errorMessages';
 
 // Hook für Screens: kapselt Ladezustand, Fehler und den aktuellen Ort.
 export function useLocation() {
@@ -16,11 +17,7 @@ export function useLocation() {
       setPlace(result);
       return result;
     } catch (e) {
-      setError(
-        e instanceof LocationPermissionError
-          ? 'Bitte erlaube den Standortzugriff in den Einstellungen.'
-          : 'Standort konnte nicht ermittelt werden.'
-      );
+      setError(getErrorMessage(e));
       return null;
     } finally {
       setIsLoading(false);
