@@ -1,8 +1,11 @@
 import { useState } from 'react';
 import { Button, Modal, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { COLORS } from '../constants/colors';
+import { useSpeech } from '../hooks/useSpeech';
 import type { Story } from '../models';
 import { useStoryStore } from '../store/useStoryStore';
+import { SpeakButton } from './SpeakButton';
+
 
 type Props = {
   visible: boolean;
@@ -13,6 +16,7 @@ type Props = {
 // Zeigt die generierte Geschichte. "Mehr erfahren" blendet die Details im selben Fenster ein.
 export function StoryModal({ visible, story, onClose }: Props) {
   const [showDetails, setShowDetails] = useState(false);
+  const { isSpeaking, toggle, stop } = useSpeech();
   const saveStory = useStoryStore((state) => state.saveStory);
   // Direkt aus dem Store lesen: stimmt auch, wenn die Geschichte woanders gelöscht wurde.
   const isSaved = useStoryStore((state) =>
@@ -21,6 +25,7 @@ export function StoryModal({ visible, story, onClose }: Props) {
 
   // Beim Schließen die Details wieder einklappen, damit die nächste Geschichte frisch startet.
   const handleClose = () => {
+    stop();
     setShowDetails(false);
     onClose();
   };
@@ -42,6 +47,13 @@ export function StoryModal({ visible, story, onClose }: Props) {
         {story && (
           <ScrollView contentContainerStyle={styles.content}>
             <Text style={styles.title}>{story.title}</Text>
+            <SpeakButton
+              isSpeaking={isSpeaking}
+              onPress={() =>
+                toggle([story.title, story.content, showDetails ? story.details : ''].filter(Boolean).join('. '))
+              }
+            />
+            <Text style={styles.body}>{story.content}</Text>
             <Text style={styles.body}>{story.content}</Text>
 
             {showDetails ? (
