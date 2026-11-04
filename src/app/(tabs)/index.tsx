@@ -7,10 +7,12 @@ import { StyleDropdown } from '../../components/StyleDropdown';
 import { COLORS } from '../../constants/colors';
 import { useLocation } from '../../hooks/useLocation';
 import { useNetworkStatus } from '../../hooks/useNetworkStatus';
-import type { StoryDraft } from '../../models';
+import type { Story } from '../../models';
 import { generateStory } from '../../services/aiService';
 import { useSettingsStore } from '../../store/useSettingsStore';
+import { createStory } from '../../utils/createStory';
 import { getErrorMessage } from '../../utils/errorMessages';
+
 
 export default function HomeScreen() {
   const { place, isLoading: isLocating, error: locationError, fetchLocation } = useLocation();
@@ -18,7 +20,7 @@ export default function HomeScreen() {
   const style = useSettingsStore((state) => state.style);
   const setStyle = useSettingsStore((state) => state.setStyle);
 
-  const [story, setStory] = useState<StoryDraft | null>(null);
+  const [story, setStory] = useState<Story | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const [storyError, setStoryError] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -34,7 +36,8 @@ export default function HomeScreen() {
 
     setIsGenerating(true);
     try {
-      setStory(await generateStory(currentPlace, style));
+      const draft = await generateStory(currentPlace, style);
+      setStory(createStory(draft, currentPlace, style));
       setIsModalOpen(true);
     } catch (e) {
       setStoryError(getErrorMessage(e));
@@ -85,7 +88,6 @@ export default function HomeScreen() {
       <StoryModal
         visible={isModalOpen}
         story={story}
-        locationName={place?.locationName ?? ''}
         onClose={() => setIsModalOpen(false)}
       />
     </View>
