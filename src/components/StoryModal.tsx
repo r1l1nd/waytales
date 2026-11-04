@@ -1,18 +1,23 @@
 import { useState } from 'react';
 import { Button, Modal, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { COLORS } from '../constants/colors';
-import type { StoryDraft } from '../models';
+import type { Story } from '../models';
+import { useStoryStore } from '../store/useStoryStore';
 
 type Props = {
   visible: boolean;
-  story: StoryDraft | null;
-  locationName: string;
+  story: Story | null;
   onClose: () => void;
 };
 
 // Zeigt die generierte Geschichte. "Mehr erfahren" blendet die Details im selben Fenster ein.
-export function StoryModal({ visible, story, locationName, onClose }: Props) {
+export function StoryModal({ visible, story, onClose }: Props) {
   const [showDetails, setShowDetails] = useState(false);
+  const saveStory = useStoryStore((state) => state.saveStory);
+  // Direkt aus dem Store lesen: stimmt auch, wenn die Geschichte woanders gelöscht wurde.
+  const isSaved = useStoryStore((state) =>
+    story ? state.stories.some((saved) => saved.id === story.id) : false
+  );
 
   // Beim Schließen die Details wieder einklappen, damit die nächste Geschichte frisch startet.
   const handleClose = () => {
@@ -20,11 +25,15 @@ export function StoryModal({ visible, story, locationName, onClose }: Props) {
     onClose();
   };
 
+  const handleSave = () => {
+    if (story) saveStory(story);
+  };
+
   return (
     <Modal visible={visible} animationType="slide" presentationStyle="pageSheet" onRequestClose={handleClose}>
       <View style={styles.container}>
         <View style={styles.header}>
-          <Text style={styles.location}>{locationName}</Text>
+          <Text style={styles.location}>{story?.locationName}</Text>
           <Pressable onPress={handleClose} accessibilityRole="button" accessibilityLabel="Schließen" hitSlop={12}>
             <Text style={styles.close}>✕</Text>
           </Pressable>
@@ -40,6 +49,23 @@ export function StoryModal({ visible, story, locationName, onClose }: Props) {
             ) : (
               <Button title="Mehr erfahren" onPress={() => setShowDetails(true)} />
             )}
+
+            <Pressable
+              style={({ pressed }) => [
+                styles.saveButton,
+                isSaved && styles.saveButtonDone,
+                pressed && !isSaved && styles.saveButtonPressed,
+              ]}
+              onPress={handleSave}
+              disabled={isSaved}
+              accessibilityRole="button"
+              accessibilityState={{ disabled: isSaved }}
+              accessibilityLabel={isSaved ? 'Geschichte ist gespeichert' : 'Geschichte speichern'}
+            >
+              <Text style={[styles.saveText, isSaved && styles.saveTextDone]}>
+                {isSaved ? '✓ Gespeichert' : 'Speichern'}
+              </Text>
+            </Pressable>
           </ScrollView>
         )}
       </View>
@@ -62,4 +88,19 @@ const styles = StyleSheet.create({
   content: { padding: 16, gap: 16 },
   title: { fontSize: 22, fontWeight: '700', color: COLORS.text },
   body: { fontSize: 16, lineHeight: 24, color: COLORS.text },
+  saveButton: {
+    alignSelf: 'center',
+    paddingVertical: 12,
+    paddingHorizontal: 32,
+    borderRadius: 24,
+    backgroundColor: COLORS.primary,
+  },
+  saveButtonPressed: { opacity: 0.7 },
+  saveButtonDone: {
+    backgroundColor: COLORS.primaryLight,
+    borderWidth: 1,
+    borderColor: COLORS.primary,
+  },
+  saveText: { fontSize: 16, fontWeight: '600', color: COLORS.background },
+  saveTextDone: { color: COLORS.primary },
 });

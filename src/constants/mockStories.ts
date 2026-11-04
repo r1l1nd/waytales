@@ -3,7 +3,7 @@ import type { Story } from '../models';
 // FAKE-DATEN: Nur zum Entwickeln, damit die Liste im Saved-Screen etwas anzeigt.
 // Später werden hier die echten, vom Nutzer gespeicherten Geschichten aus dem
 // useStoryStore verwendet (USE_MOCK_STORIES auf false setzen, Datei entfernen).
-export const USE_MOCK_STORIES = true;
+export const USE_MOCK_STORIES = false;
 
 export const MOCK_STORIES: Story[] = [
   {
