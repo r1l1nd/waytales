@@ -1,8 +1,9 @@
 import { isAxiosError } from 'axios';
+import { createMockPackingList, USE_MOCK_PACKING_LIST } from '../constants/mockPackingList';
 import { createMockStory, USE_MOCK_STORY } from '../constants/mockStory';
-import { buildStoryPrompt } from '../constants/prompts';
+import { buildPackingPrompt, buildStoryPrompt } from '../constants/prompts';
 import type { StoryStyle } from '../constants/styles';
-import type { Place, StoryDraft } from '../models';
+import type { PackingCategory, Place, StoryDraft, Weather } from '../models';
 import { createHttpClient } from './httpClient';
 
 const apiUrl = process.env.EXPO_PUBLIC_GEMINI_API_URL;
@@ -93,4 +94,43 @@ export async function generateStory(place: Place, style: StoryStyle): Promise<St
   }
 
   return { title, content, details };
+}
+
+// So kommt die Packliste von Gemini: Kategorien mit einfachen Texten.
+// unknown, weil wir nicht blind vertrauen, dass die KI das Format einhält.
+type PackingResponse = {
+  categories?: { categoryName?: unknown; items?: unknown }[];
+};
+
+// Erzeugt eine abhakbare Packliste, passend zum Wetter am Reiseziel.
+export async function generatePackingList(weather: Weather): Promise<PackingCategory[]> {
+  if (USE_MOCK_PACKING_LIST) {
+    // Kurz warten, damit der Ladeindikator wie im echten Ablauf zu sehen ist.
+    await new Promise((resolve) => setTimeout(resolve, 800));
+    return createMockPackingList();
+  }
+
+  const response = await generateJson<PackingResponse>(buildPackingPrompt(weather));
+  const rawCategories = Array.isArray(response.categories) ? response.categories : [];
+
+  // Unbrauchbares aussortieren und jedem Eintrag eine id und ein leeres Häkchen geben.
+  const categories = rawCategories
+    .filter((category) => typeof category.categoryName === 'string' && Array.isArray(category.items))
+    .map((category, categoryIndex) => ({
+      categoryName: category.categoryName as string,
+      items: (category.items as unknown[])
+        .filter((item): item is string => typeof item === 'string' && item.trim().length > 0)
+        .map((name, itemIndex) => ({
+          id: `${categoryIndex}-${itemIndex}`,
+          name: name.trim(),
+          isChecked: false,
+        })),
+    }))
+    .filter((category) => category.items.length > 0);
+
+  if (categories.length === 0) {
+    throw new AiError('INVALID_RESPONSE', 'Die Packliste war leer oder unvollständig.');
+  }
+
+  return categories;
 }
