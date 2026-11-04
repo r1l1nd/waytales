@@ -9,7 +9,7 @@ const apiKey = process.env.EXPO_PUBLIC_GEMINI_API_KEY;
 const model = process.env.EXPO_PUBLIC_GEMINI_MODEL;
 
 // KI-Antworten dauern länger als normale Abfragen, deshalb 30 Sekunden Timeout.
-const client = apiUrl ? createHttpClient(apiUrl, 30000) : null;
+const client = apiUrl ? createHttpClient(apiUrl, 90000) : null;
 
 export type AiErrorCode = 'CONFIG' | 'NETWORK' | 'RATE_LIMIT' | 'API' | 'INVALID_RESPONSE';
 
@@ -48,7 +48,8 @@ export async function generateJson<T>(prompt: string): Promise<T> {
       { headers: { 'x-goog-api-key': apiKey } }
     );
     text = data.candidates?.[0]?.content?.parts?.[0]?.text;
-  } catch (error) {
+    } catch (error) {
+    console.log('Gemini-Fehler:', isAxiosError(error) ? { code: error.code, message: error.message, url: error.config?.baseURL } : error);
     if (isAxiosError(error)) {
       // 429 = zu viele Anfragen (Limit der kostenlosen Nutzung erreicht).
       if (error.response?.status === 429) {
