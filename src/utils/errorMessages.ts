@@ -15,7 +15,7 @@ export function getErrorMessage(error: unknown): string {
       case 'CONFIG':
         return 'Gemini ist nicht eingerichtet. Prüfe die .env-Datei.';
       case 'INVALID_RESPONSE':
-        return 'Die Geschichte konnte nicht gelesen werden. Bitte versuche es noch einmal.';
+        return 'Die Antwort konnte nicht gelesen werden. Bitte versuche es noch einmal.';
       default:
         return 'Gemini hat einen Fehler gemeldet. Bitte versuche es später erneut.';
     }
