@@ -1,4 +1,5 @@
 import { isAxiosError } from 'axios';
+import { createMockStory, USE_MOCK_STORY } from '../constants/mockStory';
 import { buildStoryPrompt } from '../constants/prompts';
 import type { StoryStyle } from '../constants/styles';
 import type { Place, StoryDraft } from '../models';
@@ -77,6 +78,12 @@ export async function generateJson<T>(prompt: string): Promise<T> {
 
 // Erzeugt die Geschichte zu einem Ort im gewählten Stil.
 export async function generateStory(place: Place, style: StoryStyle): Promise<StoryDraft> {
+  if (USE_MOCK_STORY) {
+    // Kurz warten, damit der Ladeindikator wie im echten Ablauf zu sehen ist.
+    await new Promise((resolve) => setTimeout(resolve, 800));
+    return createMockStory(place);
+  }
+
   const draft = await generateJson<Partial<StoryDraft>>(buildStoryPrompt(place, style));
   const { title, content, details } = draft;
 
