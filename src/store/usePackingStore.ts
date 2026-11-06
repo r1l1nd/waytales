@@ -53,6 +53,12 @@ export const usePackingStore = create<PackingState>()(
         weather: state.weather,
         categories: state.categories,
       }),
+      // gespeichertes Anreisedatum auf heute setzen
+      onRehydrateStorage: () => (state) => {
+        if (state && state.startDate < todayIso()) {
+          state.setStartDate(todayIso());
+        }
+      },
     }
   )
 );
