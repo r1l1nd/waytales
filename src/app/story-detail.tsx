@@ -1,6 +1,7 @@
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import { SymbolView } from 'expo-symbols';
-import { ActivityIndicator, Alert, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useState } from 'react';
+import { ActivityIndicator, Alert, Button, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SpeakButton } from '../components/SpeakButton';
 import { COLORS } from '../constants/colors';
 import { useSavedStories } from '../hooks/useSavedStories';
@@ -15,6 +16,7 @@ export default function StoryDetailScreen() {
   const { stories, hasHydrated } = useSavedStories();
   const deleteStory = useStoryStore((state) => state.deleteStory);
   const { isSpeaking, toggle } = useSpeech();
+  const [showDetails, setShowDetails] = useState(false);
   const story = stories.find((saved) => saved.id === id);
   
 
@@ -89,7 +91,10 @@ export default function StoryDetailScreen() {
         <View style={styles.actions}>
           <SpeakButton
             isSpeaking={isSpeaking}
-            onPress={() => toggle(`${story.title}. ${story.content}`)}
+            // Wie im Modal: Details nur vorlesen, wenn sie aufgeklappt sind.
+            onPress={() =>
+              toggle([story.title, story.content, showDetails ? story.details : ''].filter(Boolean).join('. '))
+            }
           />
           <Pressable
             onPress={openMap}
@@ -105,6 +110,16 @@ export default function StoryDetailScreen() {
           </Pressable>
         </View>
         <Text style={styles.text}>{story.content}</Text>
+
+        {/* Ältere Geschichten haben noch keine Details, dann gibt es auch keinen Button. */}
+        {story.details &&
+          (showDetails ? (
+            <Text style={styles.text}>{story.details}</Text>
+          ) : (
+            <View style={styles.moreButton}>
+              <Button title="Mehr erfahren" onPress={() => setShowDetails(true)} />
+            </View>
+          ))}
       </ScrollView>
     </>
   );
@@ -131,4 +146,5 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   mapText: { fontSize: 16, fontWeight: '500', color: COLORS.primary },
+  moreButton: { marginTop: 16, alignSelf: 'flex-start' },
 });
