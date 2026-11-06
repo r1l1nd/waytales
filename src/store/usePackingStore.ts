@@ -13,8 +13,7 @@ type PackingState = {
   setDestination: (destination: string) => void;
   setStartDate: (startDate: string) => void;
   setDays: (days: number) => void;
-  setWeather: (weather: Weather) => void;
-  setCategories: (categories: PackingCategory[]) => void;
+  setPackingResult: (weather: Weather, categories: PackingCategory[]) => void;
   toggleItem: (id: string) => void;
 };
 
@@ -32,9 +31,8 @@ export const usePackingStore = create<PackingState>()(
       setDestination: (destination) => set({ destination }),
       setStartDate: (startDate) => set({ startDate }),
       setDays: (days) => set({ days }),
-      // Neues Wetter heißt neue Reise, die alte Liste passt dann nicht mehr.
-      setWeather: (weather) => set({ weather, categories: [] }),
-      setCategories: (categories) => set({ categories }),
+      // Wetter und Liste nur gemeinsam ersetzen. Schlägt etwas fehl, bleibt die alte Liste samt Häkchen.
+      setPackingResult: (weather, categories) => set({ weather, categories }),
       toggleItem: (id) =>
         set({
           categories: get().categories.map((category) => ({

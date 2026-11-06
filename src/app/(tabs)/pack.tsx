@@ -27,8 +27,7 @@ export default function PackScreen() {
     setDestination,
     setStartDate,
     setDays,
-    setWeather,
-    setCategories,
+    setPackingResult,
     toggleItem,
   } = usePackingStore();
 
@@ -84,9 +83,9 @@ export default function PackScreen() {
         return;
       }
 
-      // Wetter sofort zeigen, die Packliste kommt danach von Gemini.
-      setWeather(summary);
-      setCategories(await generatePackingList(summary));
+      // Erst speichern, wenn beides da ist. Bei einem Fehler bleibt die alte Liste erhalten.
+      const categories = await generatePackingList(summary);
+      setPackingResult(summary, categories);
     } catch (e) {
       setError(getErrorMessage(e));
     } finally {
