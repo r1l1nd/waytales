@@ -1,6 +1,7 @@
 import { SymbolView } from 'expo-symbols';
 import { useState } from 'react';
-import { ActivityIndicator, Alert, Pressable, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, Alert, Pressable, StyleSheet, View } from 'react-native';
+import { AppText } from '../../components/AppText';
 import { OfflineBanner } from '../../components/OfflineBanner';
 import { StoryModal } from '../../components/StoryModal';
 import { StyleDropdown } from '../../components/StyleDropdown';
@@ -65,9 +66,9 @@ export default function HomeScreen() {
     <View style={styles.screen}>
       <OfflineBanner />
       <View style={styles.container}>
-        <Text style={styles.location}>
+        <AppText style={styles.location}>
           {place ? `Standort: ${place.locationName}` : 'Standort noch unbekannt'}
-        </Text>
+        </AppText>
 
         <Pressable
           style={({ pressed }) => [
@@ -91,11 +92,11 @@ export default function HomeScreen() {
           )}
         </Pressable>
 
-        <Text style={styles.hint}>
+        <AppText style={styles.hint}>
           {isGenerating ? 'Geschichte wird erzählt ...' : 'Tippe auf den Button für eine Geschichte'}
-        </Text>
+        </AppText>
 
-        {error && <Text style={styles.error}>{error}</Text>}
+        {error && <AppText style={styles.error}>{error}</AppText>}
 
         {canOpenSettings && (
           <Pressable
@@ -103,7 +104,7 @@ export default function HomeScreen() {
             onPress={handleOpenSettings}
             accessibilityRole="button"
           >
-            <Text style={styles.settingsText}>Einstellungen öffnen</Text>
+            <AppText style={styles.settingsText}>Einstellungen öffnen</AppText>
           </Pressable>
         )}
 

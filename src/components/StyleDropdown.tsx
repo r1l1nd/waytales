@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, View } from 'react-native';
+import { AppText } from './AppText';
 import { COLORS } from '../constants/colors';
 import { STORY_STYLES, type StoryStyle } from '../constants/styles';
 
@@ -15,7 +16,7 @@ export function StyleDropdown({ value, onChange }: Props) {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.label}>Erzählstil</Text>
+      <AppText style={styles.label}>Erzählstil</AppText>
 
       <Pressable
         style={styles.field}
@@ -24,8 +25,8 @@ export function StyleDropdown({ value, onChange }: Props) {
         accessibilityLabel={`Erzählstil: ${value}`}
         accessibilityState={{ expanded: isOpen }}
       >
-        <Text style={styles.fieldText}>{value}</Text>
-        <Text style={styles.arrow}>{isOpen ? '▲' : '▼'}</Text>
+        <AppText style={styles.fieldText}>{value}</AppText>
+        <AppText style={styles.arrow}>{isOpen ? '▲' : '▼'}</AppText>
       </Pressable>
 
       {isOpen && (
@@ -41,7 +42,7 @@ export function StyleDropdown({ value, onChange }: Props) {
               accessibilityRole="button"
               accessibilityState={{ selected: style === value }}
             >
-              <Text style={styles.optionText}>{style}</Text>
+              <AppText style={styles.optionText}>{style}</AppText>
             </Pressable>
           ))}
         </View>

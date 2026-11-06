@@ -1,5 +1,6 @@
 import { SymbolView } from 'expo-symbols';
-import { Pressable, StyleSheet, Text } from 'react-native';
+import { Pressable, StyleSheet } from 'react-native';
+import { AppText } from './AppText';
 import { COLORS } from '../constants/colors';
 
 type Props = {
@@ -25,7 +26,7 @@ export function SpeakButton({ isSpeaking, onPress }: Props) {
         size={18}
         tintColor={COLORS.primary}
       />
-      <Text style={styles.text}>{isSpeaking ? 'Stopp' : 'Vorlesen'}</Text>
+      <AppText style={styles.text}>{isSpeaking ? 'Stopp' : 'Vorlesen'}</AppText>
     </Pressable>
   );
 }

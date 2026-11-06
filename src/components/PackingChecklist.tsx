@@ -1,5 +1,6 @@
 import { SymbolView } from 'expo-symbols';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, View } from 'react-native';
+import { AppText } from './AppText';
 import { COLORS } from '../constants/colors';
 import type { PackingCategory } from '../models';
 
@@ -14,9 +15,9 @@ export function PackingChecklist({ categories, onToggle }: Props) {
     <View style={styles.list}>
       {categories.map((category, categoryIndex) => (
         <View key={categoryIndex} style={styles.category}>
-          <Text style={styles.categoryName} accessibilityRole="header">
+          <AppText style={styles.categoryName} accessibilityRole="header">
             {category.categoryName}
-          </Text>
+          </AppText>
           {category.items.map((item) => (
             <Pressable
               key={item.id}
@@ -35,7 +36,7 @@ export function PackingChecklist({ categories, onToggle }: Props) {
                 size={24}
                 tintColor={COLORS.primary}
               />
-              <Text style={[styles.itemText, item.isChecked && styles.itemChecked]}>{item.name}</Text>
+              <AppText style={[styles.itemText, item.isChecked && styles.itemChecked]}>{item.name}</AppText>
             </Pressable>
           ))}
         </View>

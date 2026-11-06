@@ -1,7 +1,8 @@
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import { SymbolView } from 'expo-symbols';
 import { useState } from 'react';
-import { ActivityIndicator, Alert, Button, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, Alert, Button, Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import { AppText } from '../components/AppText';
 import { SpeakButton } from '../components/SpeakButton';
 import { COLORS } from '../constants/colors';
 import { useSavedStories } from '../hooks/useSavedStories';
@@ -30,7 +31,7 @@ export default function StoryDetailScreen() {
   if (!story) {
     return (
       <View style={styles.centered}>
-        <Text style={styles.message}>Geschichte nicht gefunden.</Text>
+        <AppText style={styles.message}>Geschichte nicht gefunden.</AppText>
       </View>
     );
   }
@@ -82,11 +83,11 @@ export default function StoryDetailScreen() {
         }}
       />
       <ScrollView contentInsetAdjustmentBehavior="automatic" contentContainerStyle={styles.content}>
-        <Text style={styles.title}>{story.title}</Text>
-        <Text style={styles.location}>{story.locationName}</Text>
-        <Text style={styles.meta}>
+        <AppText style={styles.title}>{story.title}</AppText>
+        <AppText style={styles.location}>{story.locationName}</AppText>
+        <AppText style={styles.meta}>
           {story.style} · {formatDate(story.createdAt)}
-        </Text>
+        </AppText>
         <View style={styles.actions}>
           <SpeakButton
             isSpeaking={isSpeaking}
@@ -105,15 +106,15 @@ export default function StoryDetailScreen() {
               size={18}
               tintColor={COLORS.primary}
             />
-            <Text style={styles.mapText}>Karte öffnen</Text>
+            <AppText style={styles.mapText}>Karte öffnen</AppText>
           </Pressable>
         </View>
-        <Text style={styles.text}>{story.content}</Text>
+        <AppText style={styles.text}>{story.content}</AppText>
 
         {/* Ältere Geschichten haben noch keine Details, dann gibt es auch keinen Button. */}
         {story.details &&
           (showDetails ? (
-            <Text style={styles.text}>{story.details}</Text>
+            <AppText style={styles.text}>{story.details}</AppText>
           ) : (
             <View style={styles.moreButton}>
               <Button title="Mehr erfahren" onPress={() => setShowDetails(true)} />

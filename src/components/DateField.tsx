@@ -2,7 +2,8 @@ import DateTimePicker, {
     DateTimePickerAndroid,
     type DateTimePickerEvent,
 } from '@react-native-community/datetimepicker';
-import { Platform, Pressable, StyleSheet, Text } from 'react-native';
+import { Platform, Pressable, StyleSheet } from 'react-native';
+import { AppText } from './AppText';
 import { COLORS } from '../constants/colors';
 import { fromIsoDate, toIsoDate } from '../utils/isoDate';
 
@@ -49,7 +50,7 @@ export function DateField({ value, minimumDate, onChange }: Props) {
       accessibilityLabel={`Anreise am ${label}, ändern`}
       style={({ pressed }) => [styles.field, pressed && styles.pressed]}
     >
-      <Text style={styles.text}>{label}</Text>
+      <AppText style={styles.text}>{label}</AppText>
     </Pressable>
   );
 }

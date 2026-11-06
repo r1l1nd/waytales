@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { Button, Modal, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Button, Modal, Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import { AppText } from './AppText';
 import { COLORS } from '../constants/colors';
 import { useSpeech } from '../hooks/useSpeech';
 import type { Story } from '../models';
@@ -38,24 +39,24 @@ export function StoryModal({ visible, story, onClose }: Props) {
     <Modal visible={visible} animationType="slide" presentationStyle="pageSheet" onRequestClose={handleClose}>
       <View style={styles.container}>
         <View style={styles.header}>
-          <Text style={styles.location}>{story?.locationName}</Text>
+          <AppText style={styles.location}>{story?.locationName}</AppText>
           <Pressable onPress={handleClose} accessibilityRole="button" accessibilityLabel="Schließen" hitSlop={12}>
-            <Text style={styles.close}>✕</Text>
+            <AppText style={styles.close}>✕</AppText>
           </Pressable>
         </View>
 
         {story && (
           <ScrollView contentContainerStyle={styles.content}>
-            <Text style={styles.title}>{story.title}</Text>
+            <AppText style={styles.title}>{story.title}</AppText>
             <SpeakButton
               isSpeaking={isSpeaking}
               onPress={() =>
                 toggle([story.title, story.content, showDetails ? story.details : ''].filter(Boolean).join('. '))
               }
             />
-            <Text style={styles.body}>{story.content}</Text>
+            <AppText style={styles.body}>{story.content}</AppText>
             {showDetails ? (
-              <Text style={styles.body}>{story.details}</Text>
+              <AppText style={styles.body}>{story.details}</AppText>
             ) : (
               <Button title="Mehr erfahren" onPress={() => setShowDetails(true)} />
             )}
@@ -72,9 +73,9 @@ export function StoryModal({ visible, story, onClose }: Props) {
               accessibilityState={{ disabled: isSaved }}
               accessibilityLabel={isSaved ? 'Geschichte ist gespeichert' : 'Geschichte speichern'}
             >
-              <Text style={[styles.saveText, isSaved && styles.saveTextDone]}>
+              <AppText style={[styles.saveText, isSaved && styles.saveTextDone]}>
                 {isSaved ? '✓ Gespeichert' : 'Speichern'}
-              </Text>
+              </AppText>
             </Pressable>
           </ScrollView>
         )}

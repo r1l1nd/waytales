@@ -1,5 +1,6 @@
 import { SymbolView } from 'expo-symbols';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
+import { AppText } from './AppText';
 import { COLORS } from '../constants/colors';
 import { useNetworkStatus } from '../hooks/useNetworkStatus';
 
@@ -17,10 +18,10 @@ export function OfflineBanner() {
         tintColor={COLORS.error}
         style={styles.icon}
       />
-      <Text style={styles.text}>
-        <Text style={styles.title}>Keine Internetverbindung. </Text>
+      <AppText style={styles.text}>
+        <AppText style={styles.title}>Keine Internetverbindung. </AppText>
         Gespeicherte Geschichten kannst du weiterhin lesen.
-      </Text>
+      </AppText>
     </View>
   );
 }

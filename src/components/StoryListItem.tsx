@@ -1,4 +1,5 @@
-import { Pressable, StyleSheet, Text } from 'react-native';
+import { Pressable, StyleSheet } from 'react-native';
+import { AppText } from './AppText';
 import { COLORS } from '../constants/colors';
 import type { Story } from '../models';
 import { formatDate } from '../utils/formatDate';
@@ -17,11 +18,11 @@ export function StoryListItem({ story, onPress }: StoryListItemProps) {
       accessibilityRole="button"
       style={({ pressed }) => [styles.row, pressed && styles.pressed]}
     >
-      <Text style={styles.title}>{story.title}</Text>
-      <Text style={styles.location}>{story.locationName}</Text>
-      <Text style={styles.meta}>
+      <AppText style={styles.title}>{story.title}</AppText>
+      <AppText style={styles.location}>{story.locationName}</AppText>
+      <AppText style={styles.meta}>
         {story.style} · {formatDate(story.createdAt)}
-      </Text>
+      </AppText>
     </Pressable>
   );
 }

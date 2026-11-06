@@ -1,5 +1,6 @@
 import { SymbolView } from 'expo-symbols';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
+import { AppText } from './AppText';
 import { COLORS } from '../constants/colors';
 import { describeWeather } from '../constants/weather';
 import type { Weather } from '../models';
@@ -20,11 +21,11 @@ export function WeatherCard({ weather }: Props) {
     >
       <SymbolView name={icon} size={36} tintColor={COLORS.primary} />
       <View style={styles.info}>
-        <Text style={styles.destination}>{weather.destination}</Text>
-        <Text style={styles.summary}>
+        <AppText style={styles.destination}>{weather.destination}</AppText>
+        <AppText style={styles.summary}>
           {label} · Ø {weather.temperature} °C · {weather.precipitation} mm Niederschlag
-        </Text>
-        <Text style={styles.dates}>{weather.dateRange}</Text>
+        </AppText>
+        <AppText style={styles.dates}>{weather.dateRange}</AppText>
       </View>
     </View>
   );

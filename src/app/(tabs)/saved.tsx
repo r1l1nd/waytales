@@ -1,5 +1,6 @@
 import { useRouter } from 'expo-router';
-import { ActivityIndicator, FlatList, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, FlatList, StyleSheet, View } from 'react-native';
+import { AppText } from '../../components/AppText';
 import { OfflineBanner } from '../../components/OfflineBanner';
 import { StoryListItem } from '../../components/StoryListItem';
 import { COLORS } from '../../constants/colors';
@@ -21,7 +22,7 @@ export default function SavedScreen() {
     if (stories.length === 0) {
       return (
         <View style={styles.centered}>
-          <Text style={styles.emptyText}>Noch keine Geschichten gespeichert.</Text>
+          <AppText style={styles.emptyText}>Noch keine Geschichten gespeichert.</AppText>
         </View>
       );
     }

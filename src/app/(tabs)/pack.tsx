@@ -1,10 +1,12 @@
 import { useState } from 'react';
-import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { ActivityIndicator, Pressable, ScrollView, StyleSheet, TextInput, View } from 'react-native';
+import { AppText } from '../../components/AppText';
 import { DateField } from '../../components/DateField';
 import { OfflineBanner } from '../../components/OfflineBanner';
 import { PackingChecklist } from '../../components/PackingChecklist';
 import { WeatherCard } from '../../components/WeatherCard';
 import { COLORS } from '../../constants/colors';
+import { FONTS } from '../../constants/fonts';
 import { MAX_FORECAST_DAYS } from '../../constants/weather';
 import { useNetworkStatus } from '../../hooks/useNetworkStatus';
 import { generatePackingList } from '../../services/aiService';
@@ -97,7 +99,7 @@ export default function PackScreen() {
     <View style={styles.screen}>
       <OfflineBanner />
       <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
-        <Text style={styles.label}>Reiseziel</Text>
+        <AppText style={styles.label}>Reiseziel</AppText>
         <TextInput
           style={styles.input}
           value={destination}
@@ -111,12 +113,12 @@ export default function PackScreen() {
 
         <View style={styles.row}>
           <View style={styles.rowItem}>
-            <Text style={styles.label}>Anreise</Text>
+            <AppText style={styles.label}>Anreise</AppText>
             <DateField value={startDate} minimumDate={fromIsoDate(todayIso())} onChange={setStartDate} />
           </View>
 
           <View style={styles.rowItem}>
-            <Text style={styles.label}>Dauer</Text>
+            <AppText style={styles.label}>Dauer</AppText>
             <View style={styles.stepper}>
               <Pressable
                 onPress={() => setDays(Math.max(MIN_DAYS, days - 1))}
@@ -126,11 +128,11 @@ export default function PackScreen() {
                 hitSlop={8}
                 style={styles.stepperButton}
               >
-                <Text style={[styles.stepperSymbol, days <= MIN_DAYS && styles.stepperDisabled]}>−</Text>
+                <AppText style={[styles.stepperSymbol, days <= MIN_DAYS && styles.stepperDisabled]}>−</AppText>
               </Pressable>
-              <Text style={styles.stepperValue}>
+              <AppText style={styles.stepperValue}>
                 {days} {days === 1 ? 'Tag' : 'Tage'}
-              </Text>
+              </AppText>
               <Pressable
                 onPress={() => setDays(Math.min(MAX_DAYS, days + 1))}
                 disabled={days >= MAX_DAYS}
@@ -139,7 +141,7 @@ export default function PackScreen() {
                 hitSlop={8}
                 style={styles.stepperButton}
               >
-                <Text style={[styles.stepperSymbol, days >= MAX_DAYS && styles.stepperDisabled]}>+</Text>
+                <AppText style={[styles.stepperSymbol, days >= MAX_DAYS && styles.stepperDisabled]}>+</AppText>
               </Pressable>
             </View>
           </View>
@@ -159,24 +161,24 @@ export default function PackScreen() {
           {isLoading ? (
             <ActivityIndicator color={COLORS.background} />
           ) : (
-            <Text style={styles.generateText}>Packliste erstellen</Text>
+            <AppText style={styles.generateText}>Packliste erstellen</AppText>
           )}
         </Pressable>
 
         {!isOnline && (
-          <Text style={styles.hint}>
+          <AppText style={styles.hint}>
             Ohne Internet kann keine neue Packliste erstellt werden. Deine letzte Liste bleibt erhalten.
-          </Text>
+          </AppText>
         )}
-        {error && <Text style={styles.error}>{error}</Text>}
+        {error && <AppText style={styles.error}>{error}</AppText>}
 
         {weather && <WeatherCard weather={weather} />}
 
         {categories.length > 0 && (
           <>
-            <Text style={styles.progress}>
+            <AppText style={styles.progress}>
               {checkedCount} von {totalCount} eingepackt
-            </Text>
+            </AppText>
             <PackingChecklist categories={categories} onToggle={toggleItem} />
           </>
         )}
@@ -196,6 +198,8 @@ const styles = StyleSheet.create({
     borderColor: COLORS.border,
     borderRadius: 8,
     fontSize: 16,
+    // TextInput ist kein AppText, darum die Schrift hier direkt setzen.
+    fontFamily: FONTS.regular,
     color: COLORS.text,
   },
   row: { flexDirection: 'row', gap: 16 },

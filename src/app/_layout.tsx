@@ -8,6 +8,7 @@ import {
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
+import { FONTS } from '../constants/fonts';
 
 // Startbildschirm stehen lassen, bis die Schrift geladen ist. Sonst springt der Text sichtbar um.
 SplashScreen.preventAutoHideAsync();
@@ -35,7 +36,8 @@ export default function RootLayout() {
   }
 
   return (
-    <Stack>
+    // Kopfzeile der Detailansicht ebenfalls in der App-Schrift.
+    <Stack screenOptions={{ headerTitleStyle: { fontFamily: FONTS.semibold } }}>
       <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
       <Stack.Screen
         name="story-detail"
