@@ -18,7 +18,6 @@ export default function StoryDetailScreen() {
   const { isSpeaking, toggle } = useSpeech();
   const [showDetails, setShowDetails] = useState(false);
   const story = stories.find((saved) => saved.id === id);
-  
 
   if (!hasHydrated) {
     return (
@@ -91,7 +90,7 @@ export default function StoryDetailScreen() {
         <View style={styles.actions}>
           <SpeakButton
             isSpeaking={isSpeaking}
-            // Wie im Modal: Details nur vorlesen, wenn sie aufgeklappt sind.
+            // Details nur vorlesen, wenn sie aufgeklappt sind.
             onPress={() =>
               toggle([story.title, story.content, showDetails ? story.details : ''].filter(Boolean).join('. '))
             }
