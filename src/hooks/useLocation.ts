@@ -7,7 +7,7 @@ import {
 } from '../services/locationService';
 import { getErrorMessage } from '../utils/errorMessages';
 
-// Nur in diesen Fällen kann die Nutzerin das Problem selbst in den Einstellungen lösen.
+// Problem selbst in den Einstellungen lösen
 function needsSettings(error: unknown): boolean {
   if (error instanceof LocationPermissionError) return !error.canAskAgain;
   return error instanceof LocationServicesDisabledError;
