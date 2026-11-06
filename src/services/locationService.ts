@@ -2,18 +2,35 @@ import * as Location from 'expo-location';
 import type { Place } from '../models';
 
 // Eigener Fehlertyp, damit die UI "Berechtigung abgelehnt" von anderen Fehlern unterscheiden kann.
+// canAskAgain = false heißt dauerhaft abgelehnt -> Einstellungen.
 export class LocationPermissionError extends Error {
-  constructor() {
+  canAskAgain: boolean;
+
+  constructor(canAskAgain: boolean) {
     super('Standortberechtigung wurde abgelehnt.');
     this.name = 'LocationPermissionError';
+    this.canAskAgain = canAskAgain;
+  }
+}
+
+// GPS aus
+export class LocationServicesDisabledError extends Error {
+  constructor() {
+    super('Ortungsdienste sind ausgeschaltet.');
+    this.name = 'LocationServicesDisabledError';
   }
 }
 
 // Fragt die Berechtigung ab, holt die Koordinaten und den Ortsnamen.
 export async function getCurrentPlace(): Promise<Place> {
-  const { status } = await Location.requestForegroundPermissionsAsync();
+  const { status, canAskAgain } = await Location.requestForegroundPermissionsAsync();
   if (status !== Location.PermissionStatus.GRANTED) {
-    throw new LocationPermissionError();
+    throw new LocationPermissionError(canAskAgain);
+  }
+
+  const servicesEnabled = await Location.hasServicesEnabledAsync();
+  if (!servicesEnabled) {
+    throw new LocationServicesDisabledError();
   }
 
   const position = await Location.getCurrentPositionAsync({

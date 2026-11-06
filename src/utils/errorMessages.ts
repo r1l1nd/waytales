@@ -1,11 +1,17 @@
 import { isAxiosError } from 'axios';
 import { AiError } from '../services/aiService';
-import { LocationPermissionError } from '../services/locationService';
+import { LocationPermissionError, LocationServicesDisabledError } from '../services/locationService';
 
 // Wandelt einen Fehler in eine verständliche Meldung für den Nutzer um.
 export function getErrorMessage(error: unknown): string {
   if (error instanceof LocationPermissionError) {
-    return 'Bitte erlaube den Standortzugriff in den Einstellungen.';
+    // Dauerhaft abgelehnt: Die App darf nicht mehr fragen, nur die Einstellungen helfen.
+    return error.canAskAgain
+      ? 'Ohne Standort kann WayTales keine Geschichte erzählen. Tippe erneut und erlaube den Zugriff.'
+      : 'Der Standortzugriff ist ausgeschaltet. Erlaube ihn in den Einstellungen, um Geschichten zu hören.';
+  }
+  if (error instanceof LocationServicesDisabledError) {
+    return 'Die Ortungsdienste sind ausgeschaltet. Schalte sie in den Einstellungen ein und versuche es erneut.';
   }
   if (error instanceof AiError) {
     switch (error.code) {
