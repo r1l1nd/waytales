@@ -1,3 +1,4 @@
+import * as Linking from 'expo-linking';
 import * as Location from 'expo-location';
 import type { Place } from '../models';
 
@@ -52,4 +53,9 @@ async function getLocationName(latitude: number, longitude: number): Promise<str
   } catch {
     return 'Unbekannter Ort';
   }
+}
+
+// Öffnet die App-Einstellungen, um den Standortzugriff selbst zu erlauben
+export async function openAppSettings() {
+  await Linking.openSettings();
 }

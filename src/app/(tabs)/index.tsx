@@ -1,6 +1,6 @@
 import { SymbolView } from 'expo-symbols';
 import { useState } from 'react';
-import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, Alert, Pressable, StyleSheet, Text, View } from 'react-native';
 import { OfflineBanner } from '../../components/OfflineBanner';
 import { StoryModal } from '../../components/StoryModal';
 import { StyleDropdown } from '../../components/StyleDropdown';
@@ -9,13 +9,20 @@ import { useLocation } from '../../hooks/useLocation';
 import { useNetworkStatus } from '../../hooks/useNetworkStatus';
 import type { Story } from '../../models';
 import { generateStory } from '../../services/aiService';
+import { openAppSettings } from '../../services/locationService';
 import { useSettingsStore } from '../../store/useSettingsStore';
 import { createStory } from '../../utils/createStory';
 import { getErrorMessage } from '../../utils/errorMessages';
 
 
 export default function HomeScreen() {
-  const { place, isLoading: isLocating, error: locationError, fetchLocation } = useLocation();
+  const {
+    place,
+    isLoading: isLocating,
+    error: locationError,
+    canOpenSettings,
+    fetchLocation,
+  } = useLocation();
   const { isOnline } = useNetworkStatus();
   const style = useSettingsStore((state) => state.style);
   const setStyle = useSettingsStore((state) => state.setStyle);
@@ -43,6 +50,14 @@ export default function HomeScreen() {
       setStoryError(getErrorMessage(e));
     } finally {
       setIsGenerating(false);
+    }
+  };
+
+  const handleOpenSettings = async () => {
+    try {
+      await openAppSettings();
+    } catch {
+      Alert.alert('Einstellungen nicht verfügbar', 'Bitte öffne die Einstellungen deines Geräts selbst.');
     }
   };
 
@@ -82,6 +97,16 @@ export default function HomeScreen() {
 
         {error && <Text style={styles.error}>{error}</Text>}
 
+        {canOpenSettings && (
+          <Pressable
+            style={({ pressed }) => [styles.settingsButton, pressed && styles.settingsButtonPressed]}
+            onPress={handleOpenSettings}
+            accessibilityRole="button"
+          >
+            <Text style={styles.settingsText}>Einstellungen öffnen</Text>
+          </Pressable>
+        )}
+
         <StyleDropdown value={style} onChange={setStyle} />
       </View>
 
@@ -118,4 +143,13 @@ const styles = StyleSheet.create({
   gpsButtonPressed: { opacity: 0.7 },
   hint: { fontSize: 14, color: COLORS.textMuted, textAlign: 'center' },
   error: { color: COLORS.error, textAlign: 'center' },
+  settingsButton: {
+    minHeight: 48,
+    paddingHorizontal: 20,
+    borderRadius: 24,
+    justifyContent: 'center',
+    backgroundColor: COLORS.primaryLight,
+  },
+  settingsButtonPressed: { opacity: 0.6 },
+  settingsText: { fontSize: 16, fontWeight: '500', color: COLORS.primary },
 });
