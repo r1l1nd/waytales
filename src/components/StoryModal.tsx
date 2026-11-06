@@ -54,8 +54,6 @@ export function StoryModal({ visible, story, onClose }: Props) {
               }
             />
             <Text style={styles.body}>{story.content}</Text>
-            <Text style={styles.body}>{story.content}</Text>
-
             {showDetails ? (
               <Text style={styles.body}>{story.details}</Text>
             ) : (
