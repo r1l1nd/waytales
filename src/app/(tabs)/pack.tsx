@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ActivityIndicator, Pressable, ScrollView, StyleSheet, TextInput, View } from 'react-native';
 import { AppText } from '../../components/AppText';
 import { DateField } from '../../components/DateField';
@@ -26,15 +26,25 @@ export default function PackScreen() {
     days,
     weather,
     categories,
+    isBasicList,
     setDestination,
     setStartDate,
     setDays,
     setPackingResult,
+    showBasicList,
     toggleItem,
   } = usePackingStore();
 
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Offline und noch keine Liste: Basisliste statt leerem Screen.
+  // categories.length steht drin, weil die gespeicherte Liste erst kurz nach dem Start geladen wird.
+  useEffect(() => {
+    if (!isOnline && categories.length === 0) {
+      showBasicList();
+    }
+  }, [isOnline, categories.length, showBasicList]);
 
   const isDisabled = !isOnline || isLoading;
   const totalCount = categories.reduce((sum, category) => sum + category.items.length, 0);
@@ -165,7 +175,7 @@ export default function PackScreen() {
           )}
         </Pressable>
 
-        {!isOnline && (
+        {!isOnline && !isBasicList && (
           <AppText style={styles.hint}>
             Ohne Internet kann keine neue Packliste erstellt werden. Deine letzte Liste bleibt erhalten.
           </AppText>
@@ -176,6 +186,15 @@ export default function PackScreen() {
 
         {categories.length > 0 && (
           <>
+            {isBasicList && (
+              <View style={styles.basicNotice}>
+                <AppText style={styles.basicNoticeTitle}>Basisliste</AppText>
+                <AppText style={styles.basicNoticeText}>
+                  Das sind nur Dinge, die man auf jeder Reise braucht. Für eine Liste passend zu Reiseziel,
+                  Wetter und Dauer brauchst du Internet.
+                </AppText>
+              </View>
+            )}
             <AppText style={styles.progress}>
               {checkedCount} von {totalCount} eingepackt
             </AppText>
@@ -232,4 +251,14 @@ const styles = StyleSheet.create({
   hint: { fontSize: 14, color: COLORS.textMuted, textAlign: 'center' },
   error: { fontSize: 14, color: COLORS.error, textAlign: 'center' },
   progress: { marginTop: 8, fontSize: 14, color: COLORS.textMuted },
+  basicNotice: {
+    marginTop: 8,
+    padding: 12,
+    gap: 4,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    borderRadius: 8,
+  },
+  basicNoticeTitle: { fontSize: 15, fontWeight: '600', color: COLORS.text },
+  basicNoticeText: { fontSize: 14, lineHeight: 20, color: COLORS.textMuted },
 });
