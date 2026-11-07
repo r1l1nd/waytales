@@ -102,15 +102,15 @@ type PackingResponse = {
   categories?: { categoryName?: unknown; items?: unknown }[];
 };
 
-// Erzeugt eine abhakbare Packliste, passend zum Wetter am Reiseziel.
-export async function generatePackingList(weather: Weather): Promise<PackingCategory[]> {
+// Erzeugt eine abhakbare Packliste mit Mengen, passend zu Wetter und Reisedauer.
+export async function generatePackingList(weather: Weather, days: number): Promise<PackingCategory[]> {
   if (USE_MOCK_PACKING_LIST) {
     // Kurz warten, damit der Ladeindikator wie im echten Ablauf zu sehen ist.
     await new Promise((resolve) => setTimeout(resolve, 800));
     return createMockPackingList();
   }
 
-  const response = await generateJson<PackingResponse>(buildPackingPrompt(weather));
+  const response = await generateJson<PackingResponse>(buildPackingPrompt(weather, days));
   const rawCategories = Array.isArray(response.categories) ? response.categories : [];
 
   // Unbrauchbares aussortieren und jedem Eintrag eine id und ein leeres Häkchen geben.

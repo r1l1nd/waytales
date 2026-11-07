@@ -28,12 +28,13 @@ export function buildStoryPrompt(place: Place, style: StoryStyle): string {
   ].join('\n');
 }
 
-// Baut den Prompt für die Packliste aus dem zusammengefassten Reisewetter.
-export function buildPackingPrompt(weather: Weather): string {
+// Baut den Prompt für die Packliste aus dem zusammengefassten Reisewetter und der Reisedauer.
+export function buildPackingPrompt(weather: Weather, days: number): string {
   return [
     'Du hilfst Reisenden beim Packen.',
     `Reiseziel: ${weather.destination}`,
     `Reisezeitraum: ${weather.dateRange}`,
+    `Reisedauer: ${days} ${days === 1 ? 'Tag' : 'Tage'}`,
     `Durchschnittstemperatur: ${weather.temperature} °C`,
     `Niederschlag gesamt: ${weather.precipitation} mm`,
     `Häufigster Wettercode (WMO): ${weather.conditionCode}`,
@@ -41,10 +42,11 @@ export function buildPackingPrompt(weather: Weather): string {
     'Regeln:',
     '- Schreibe auf Deutsch.',
     '- Passe die Liste an Temperatur und Niederschlag an, z. B. Regenjacke nur bei Regen, Sonnencreme nur bei Sonne oder Wärme.',
-    '- Kurze Einträge mit höchstens drei Wörtern, keine Mengenangaben.',
+    '- Jeder Eintrag beginnt mit der Anzahl als Zahl, danach höchstens drei Wörter, z. B. "5 Paar Socken" oder "1 Regenjacke".',
+    '- Passe die Anzahl an Reisedauer und Wetter an, z. B. Unterwäsche und Socken pro Tag, bei Kälte mehr warme Kleidung. Bei Reisen über 7 Tage rechne mit einmal Waschen.',
     '- 3 bis 5 Kategorien (z. B. Kleidung, Wetterschutz, Hygiene, Dokumente, Technik) mit je 3 bis 8 Einträgen.',
     '',
     'Antworte ausschließlich als JSON in genau dieser Form:',
-    '{"categories": [{"categoryName": "Kleidung", "items": ["T-Shirts", "Pullover"]}]}',
+    '{"categories": [{"categoryName": "Kleidung", "items": ["4 T-Shirts", "2 Pullover"]}]}',
   ].join('\n');
 }

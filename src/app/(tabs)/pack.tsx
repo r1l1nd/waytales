@@ -86,7 +86,7 @@ export default function PackScreen() {
       }
 
       // Erst speichern, wenn beides da ist. Bei einem Fehler bleibt die alte Liste erhalten.
-      const categories = await generatePackingList(summary);
+      const categories = await generatePackingList(summary, days);
       setPackingResult(summary, categories);
     } catch (e) {
       setError(getErrorMessage(e));
