@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import { createBasicPackingList } from '../constants/basicPackingList';
 import type { PackingCategory, Weather } from '../models';
 import { createStorage } from '../services/storageService';
 import { todayIso } from '../utils/isoDate';
@@ -10,15 +11,21 @@ type PackingState = {
   days: number;
   weather: Weather | null;
   categories: PackingCategory[];
+  // true, solange nur die Offline-Basisliste statt einer KI-Liste angezeigt wird.
+  isBasicList: boolean;
   setDestination: (destination: string) => void;
   setStartDate: (startDate: string) => void;
   setDays: (days: number) => void;
   setPackingResult: (weather: Weather, categories: PackingCategory[]) => void;
+  showBasicList: () => void;
   toggleItem: (id: string) => void;
 };
 
 // Der Teil des Stores, der wirklich gespeichert wird (ohne Funktionen).
-type PersistedPackingState = Pick<PackingState, 'destination' | 'startDate' | 'days' | 'weather' | 'categories'>;
+type PersistedPackingState = Pick<
+  PackingState,
+  'destination' | 'startDate' | 'days' | 'weather' | 'categories' | 'isBasicList'
+>;
 
 export const usePackingStore = create<PackingState>()(
   persist(
@@ -28,11 +35,18 @@ export const usePackingStore = create<PackingState>()(
       days: 3,
       weather: null,
       categories: [],
+      isBasicList: false,
       setDestination: (destination) => set({ destination }),
       setStartDate: (startDate) => set({ startDate }),
       setDays: (days) => set({ days }),
       // Wetter und Liste nur gemeinsam ersetzen. Schlägt etwas fehl, bleibt die alte Liste samt Häkchen.
-      setPackingResult: (weather, categories) => set({ weather, categories }),
+      // Eine echte Liste ersetzt auch die Basisliste.
+      setPackingResult: (weather, categories) => set({ weather, categories, isBasicList: false }),
+      // Nur wenn noch gar keine Liste da ist. Eine gespeicherte Liste wird nie überschrieben.
+      showBasicList: () => {
+        if (get().categories.length > 0) return;
+        set({ categories: createBasicPackingList(), isBasicList: true });
+      },
       toggleItem: (id) =>
         set({
           categories: get().categories.map((category) => ({
@@ -52,6 +66,7 @@ export const usePackingStore = create<PackingState>()(
         days: state.days,
         weather: state.weather,
         categories: state.categories,
+        isBasicList: state.isBasicList,
       }),
       // gespeichertes Anreisedatum auf heute setzen
       onRehydrateStorage: () => (state) => {
