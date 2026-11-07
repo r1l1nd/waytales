@@ -42,11 +42,13 @@ export function buildPackingPrompt(weather: Weather, days: number): string {
     'Regeln:',
     '- Schreibe auf Deutsch.',
     '- Passe die Liste an Temperatur und Niederschlag an, z. B. Regenjacke nur bei Regen, Sonnencreme nur bei Sonne oder Wärme.',
-    '- Jeder Eintrag beginnt mit der Anzahl als Zahl, danach höchstens drei Wörter, z. B. "5 Paar Socken" oder "1 Regenjacke".',
+    '- Kurze Einträge mit höchstens drei Wörtern.',
+    '- Schreibe eine Anzahl als Zahl vorne nur dort, wo sie hilft, also bei Dingen, von denen man mehrere braucht oder deren Menge von der Reisedauer abhängt, z. B. "5 Paar Socken".',
+    '- Einzelstücke, die man selbstverständlich nur einmal mitnimmt, bekommen keine Zahl, z. B. "Smartphone", "Reisepass", "Regenjacke".',
     '- Passe die Anzahl an Reisedauer und Wetter an, z. B. Unterwäsche und Socken pro Tag, bei Kälte mehr warme Kleidung. Bei Reisen über 7 Tage rechne mit einmal Waschen.',
     '- 3 bis 5 Kategorien (z. B. Kleidung, Wetterschutz, Hygiene, Dokumente, Technik) mit je 3 bis 8 Einträgen.',
     '',
     'Antworte ausschließlich als JSON in genau dieser Form:',
-    '{"categories": [{"categoryName": "Kleidung", "items": ["4 T-Shirts", "2 Pullover"]}]}',
+    '{"categories": [{"categoryName": "Kleidung", "items": ["4 T-Shirts", "2 Pullover", "Regenjacke"]}]}',
   ].join('\n');
 }
