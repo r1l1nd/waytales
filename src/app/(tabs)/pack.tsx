@@ -32,19 +32,22 @@ export default function PackScreen() {
     setDays,
     setPackingResult,
     showBasicList,
+    clearBasicList,
     toggleItem,
   } = usePackingStore();
 
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Offline und noch keine Liste: Basisliste statt leerem Screen.
+  // Offline und noch keine Liste: Basisliste statt leerem Screen. Wieder online: Basisliste weg.
   // categories.length steht drin, weil die gespeicherte Liste erst kurz nach dem Start geladen wird.
   useEffect(() => {
     if (!isOnline && categories.length === 0) {
       showBasicList();
+    } else if (isOnline && isBasicList) {
+      clearBasicList();
     }
-  }, [isOnline, categories.length, showBasicList]);
+  }, [isOnline, categories.length, isBasicList, showBasicList, clearBasicList]);
 
   const isDisabled = !isOnline || isLoading;
   const totalCount = categories.reduce((sum, category) => sum + category.items.length, 0);
@@ -181,6 +184,11 @@ export default function PackScreen() {
           </AppText>
         )}
         {error && <AppText style={styles.error}>{error}</AppText>}
+
+        {/* Leerer Zustand: noch keine Liste, aber online. */}
+        {isOnline && categories.length === 0 && !isLoading && (
+          <AppText style={styles.hint}>Gib ein Reiseziel ein und erstelle deine Packliste.</AppText>
+        )}
 
         {weather && <WeatherCard weather={weather} />}
 

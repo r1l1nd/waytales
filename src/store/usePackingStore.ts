@@ -18,14 +18,12 @@ type PackingState = {
   setDays: (days: number) => void;
   setPackingResult: (weather: Weather, categories: PackingCategory[]) => void;
   showBasicList: () => void;
+  clearBasicList: () => void;
   toggleItem: (id: string) => void;
 };
 
 // Der Teil des Stores, der wirklich gespeichert wird (ohne Funktionen).
-type PersistedPackingState = Pick<
-  PackingState,
-  'destination' | 'startDate' | 'days' | 'weather' | 'categories' | 'isBasicList'
->;
+type PersistedPackingState = Pick<PackingState, 'destination' | 'startDate' | 'days' | 'weather' | 'categories'>;
 
 export const usePackingStore = create<PackingState>()(
   persist(
@@ -47,7 +45,11 @@ export const usePackingStore = create<PackingState>()(
         if (get().categories.length > 0) return;
         set({ categories: createBasicPackingList(), isBasicList: true });
       },
-      toggleItem: (id) =>
+      // Wieder online: Basisliste entfernen
+      clearBasicList: () => {
+        if (!get().isBasicList) return;
+        set({ categories: [], isBasicList: false });
+      },      toggleItem: (id) =>
         set({
           categories: get().categories.map((category) => ({
             ...category,
@@ -65,8 +67,7 @@ export const usePackingStore = create<PackingState>()(
         startDate: state.startDate,
         days: state.days,
         weather: state.weather,
-        categories: state.categories,
-        isBasicList: state.isBasicList,
+        categories: state.isBasicList ? [] : state.categories,
       }),
       // gespeichertes Anreisedatum auf heute setzen
       onRehydrateStorage: () => (state) => {
