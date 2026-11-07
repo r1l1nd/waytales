@@ -9,7 +9,7 @@ type Options = {
 
 // Gibt einen Text Stück für Stück zurück, als würde er gerade getippt.
 // skip() zeigt sofort den ganzen Text.
-export function useTypewriter(text: string, { intervalMs = 20, charsPerTick = 3 }: Options = {}) {
+export function useTypewriter(text: string, { intervalMs = 15, charsPerTick = 5 }: Options = {}) {
   /**
    * text: Welcher Text gerade verarbeitet wird.
    * length: Wie viele Zeichen davon bereits angezeigt werden.

@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import { Button, Modal, Pressable, ScrollView, StyleSheet, View } from 'react-native';
-import { AppText } from './AppText';
 import { COLORS } from '../constants/colors';
 import { useSpeech } from '../hooks/useSpeech';
 import { useTypewriter } from '../hooks/useTypewriter';
 import type { Story } from '../models';
 import { useStoryStore } from '../store/useStoryStore';
+import { AppText } from './AppText';
 import { SpeakButton } from './SpeakButton';
 
 
@@ -19,8 +19,9 @@ type Props = {
 export function StoryModal({ visible, story, onClose }: Props) {
   const [showDetails, setShowDetails] = useState(false);
   const { isSpeaking, toggle, stop } = useSpeech();
-  // Hook immer aufrufen (Rules of Hooks), daher leerer Text, solange keine Geschichte da ist.
   const { displayedText, isDone, skip } = useTypewriter(story?.content ?? '');
+  // Details bekommen erst nach "Mehr erfahren" Text, dadurch startet das Tippen genau dann.
+  const details = useTypewriter(showDetails ? (story?.details ?? '') : '');
   const saveStory = useStoryStore((state) => state.saveStory);
   // Direkt aus dem Store lesen: stimmt auch, wenn die Geschichte woanders gelöscht wurde.
   const isSaved = useStoryStore((state) =>
@@ -68,12 +69,19 @@ export function StoryModal({ visible, story, onClose }: Props) {
 
             {/* Buttons erst zeigen, wenn der Text fertig ist, damit nichts verrutscht. */}
             {isDone && (showDetails ? (
-              <AppText style={styles.body}>{story.details}</AppText>
+              <Pressable
+                onPress={details.skip}
+                disabled={details.isDone}
+                accessibilityHint={details.isDone ? undefined : 'Zeigt sofort alle Details'}
+              >
+                <AppText style={styles.body}>{details.displayedText}</AppText>
+              </Pressable>
             ) : (
               <Button title="Mehr erfahren" onPress={() => setShowDetails(true)} />
             ))}
 
-            {isDone && (
+            {/* Speichern erst, wenn Geschichte und (falls geöffnet) Details fertig getippt sind. */}
+            {isDone && (!showDetails || details.isDone) && (
               <Pressable
                 style={({ pressed }) => [
                   styles.saveButton,
