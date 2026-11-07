@@ -3,6 +3,7 @@ import { Button, Modal, Pressable, ScrollView, StyleSheet, View } from 'react-na
 import { AppText } from './AppText';
 import { COLORS } from '../constants/colors';
 import { useSpeech } from '../hooks/useSpeech';
+import { useTypewriter } from '../hooks/useTypewriter';
 import type { Story } from '../models';
 import { useStoryStore } from '../store/useStoryStore';
 import { SpeakButton } from './SpeakButton';
@@ -18,6 +19,8 @@ type Props = {
 export function StoryModal({ visible, story, onClose }: Props) {
   const [showDetails, setShowDetails] = useState(false);
   const { isSpeaking, toggle, stop } = useSpeech();
+  // Hook immer aufrufen (Rules of Hooks), daher leerer Text, solange keine Geschichte da ist.
+  const { displayedText, isDone, skip } = useTypewriter(story?.content ?? '');
   const saveStory = useStoryStore((state) => state.saveStory);
   // Direkt aus dem Store lesen: stimmt auch, wenn die Geschichte woanders gelöscht wurde.
   const isSaved = useStoryStore((state) =>
@@ -54,29 +57,40 @@ export function StoryModal({ visible, story, onClose }: Props) {
                 toggle([story.title, story.content, showDetails ? story.details : ''].filter(Boolean).join('. '))
               }
             />
-            <AppText style={styles.body}>{story.content}</AppText>
-            {showDetails ? (
+            {/* Tippen auf den Text überspringt den Tippeffekt. */}
+            <Pressable
+              onPress={skip}
+              disabled={isDone}
+              accessibilityHint={isDone ? undefined : 'Zeigt sofort die ganze Geschichte'}
+            >
+              <AppText style={styles.body}>{displayedText}</AppText>
+            </Pressable>
+
+            {/* Buttons erst zeigen, wenn der Text fertig ist, damit nichts verrutscht. */}
+            {isDone && (showDetails ? (
               <AppText style={styles.body}>{story.details}</AppText>
             ) : (
               <Button title="Mehr erfahren" onPress={() => setShowDetails(true)} />
-            )}
+            ))}
 
-            <Pressable
-              style={({ pressed }) => [
-                styles.saveButton,
-                isSaved && styles.saveButtonDone,
-                pressed && !isSaved && styles.saveButtonPressed,
-              ]}
-              onPress={handleSave}
-              disabled={isSaved}
-              accessibilityRole="button"
-              accessibilityState={{ disabled: isSaved }}
-              accessibilityLabel={isSaved ? 'Geschichte ist gespeichert' : 'Geschichte speichern'}
-            >
-              <AppText style={[styles.saveText, isSaved && styles.saveTextDone]}>
-                {isSaved ? '✓ Gespeichert' : 'Speichern'}
-              </AppText>
-            </Pressable>
+            {isDone && (
+              <Pressable
+                style={({ pressed }) => [
+                  styles.saveButton,
+                  isSaved && styles.saveButtonDone,
+                  pressed && !isSaved && styles.saveButtonPressed,
+                ]}
+                onPress={handleSave}
+                disabled={isSaved}
+                accessibilityRole="button"
+                accessibilityState={{ disabled: isSaved }}
+                accessibilityLabel={isSaved ? 'Geschichte ist gespeichert' : 'Geschichte speichern'}
+              >
+                <AppText style={[styles.saveText, isSaved && styles.saveTextDone]}>
+                  {isSaved ? '✓ Gespeichert' : 'Speichern'}
+                </AppText>
+              </Pressable>
+            )}
           </ScrollView>
         )}
       </View>
