@@ -30,6 +30,13 @@ describe('summarizeForecast', () => {
     expect(summarizeForecast(days, 'Wien')?.temperature).toBe(17);
   });
 
+  it('rundet auch Minusgrade auf ganze Grad', () => {
+    // Tagesmittel -2,5 °C. Math.round rundet ,5 immer nach oben (zur größeren Zahl), also auf -2.
+    const days = [createDay({ temperatureMax: -1, temperatureMin: -4 })];
+
+    expect(summarizeForecast(days, 'Innsbruck')?.temperature).toBe(-2);
+  });
+
   it('addiert den Niederschlag und rundet auf eine Nachkommastelle', () => {
     const days = [createDay({ precipitation: 0.1 }), createDay({ precipitation: 0.2 })];
 
