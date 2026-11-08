@@ -252,9 +252,6 @@ Die Standortberechtigung wird erst angefragt, wenn man auf den GPS-Button tippt,
 
 Ob eine Ablehnung „dauerhaft“ ist, entscheidet das Betriebssystem (Android nach der zweiten, iOS schon nach der ersten Ablehnung). Die App wertet dafür `canAskAgain` aus und funktioniert so auf beiden Plattformen gleich.
 
-<!-- SCREENSHOT: Hinweis bei dauerhaft abgelehnter Standortberechtigung mit Button "Einstellungen öffnen".
-     Datei z. B. docs/screenshots/permission-denied.png -->
-
 ---
 
 ## Offline & Persistenz
@@ -322,9 +319,6 @@ npm test
 | `mapService.test.ts` | Karten-Link für iOS und Android, korrekt kodierte Ortsnamen |
 | `StoryModal.test.tsx` | Speichern-Button: „Speichern“ → „Gespeichert“, keine doppelte Speicherung |
 | `StyleDropdown.test.tsx` | Stil-Dropdown: zeigt den gewählten Stil, öffnet die Liste, meldet die neue Auswahl und schließt |
-
-<!-- SCREENSHOT (optional): Terminal-Ausgabe von "npm test" mit allen grünen Tests.
-     Datei z. B. docs/screenshots/tests.png -->
 
 ---
 
