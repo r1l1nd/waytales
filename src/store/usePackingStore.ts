@@ -49,7 +49,8 @@ export const usePackingStore = create<PackingState>()(
       clearBasicList: () => {
         if (!get().isBasicList) return;
         set({ categories: [], isBasicList: false });
-      },      toggleItem: (id) =>
+      },
+      toggleItem: (id) =>
         set({
           categories: get().categories.map((category) => ({
             ...category,
