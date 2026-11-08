@@ -1,3 +1,4 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import type { Story } from '../src/models';
 import { useStoryStore } from '../src/store/useStoryStore';
 
@@ -24,10 +25,11 @@ describe('useStoryStore', () => {
     useStoryStore.setState({ stories: [] });
   });
 
-  it('speichert eine Geschichte', () => {
+  it('speichert neue Geschichten vorne in der Liste', () => {
     useStoryStore.getState().saveStory(createStory('1'));
+    useStoryStore.getState().saveStory(createStory('2'));
 
-    expect(useStoryStore.getState().stories).toHaveLength(1);
+    expect(useStoryStore.getState().stories.map((story) => story.id)).toEqual(['2', '1']);
   });
 
   it('speichert dieselbe Geschichte nicht doppelt', () => {
@@ -44,5 +46,13 @@ describe('useStoryStore', () => {
     useStoryStore.getState().deleteStory('1');
 
     expect(useStoryStore.getState().stories.map((story) => story.id)).toEqual(['2']);
+  });
+
+  it('schreibt nur die Geschichten in den Speicher, nicht das Lade-Flag', async () => {
+    useStoryStore.getState().saveStory(createStory('1'));
+
+    const saved = JSON.parse((await AsyncStorage.getItem('story-storage'))!);
+
+    expect(saved.state).toEqual({ stories: [createStory('1')] });
   });
 });
