@@ -49,6 +49,29 @@ describe('usePackingStore.toggleItem', () => {
 });
 
 describe('Offline-Basisliste', () => {
+  beforeEach(() => {
+    usePackingStore.setState({ hasHydrated: true });
+  });
+
+  it('zeigt vor dem Laden des Speichers keine Basisliste', () => {
+    usePackingStore.setState({ categories: [], isBasicList: false, hasHydrated: false });
+
+    usePackingStore.getState().showBasicList();
+
+    expect(usePackingStore.getState().categories).toEqual([]);
+    expect(usePackingStore.getState().isBasicList).toBe(false);
+  });
+
+  it('meldet nach dem Laden hasHydrated und speichert das Flag nicht', async () => {
+    usePackingStore.setState({ hasHydrated: false });
+
+    await usePackingStore.persist.rehydrate();
+
+    expect(usePackingStore.getState().hasHydrated).toBe(true);
+    const saved = JSON.parse((await AsyncStorage.getItem('packing-storage'))!);
+    expect(saved.state).not.toHaveProperty('hasHydrated');
+  });
+
   it('überschreibt eine vorhandene Liste samt Häkchen nicht', () => {
     const withCheck = [{ categoryName: 'Kleidung', items: [{ id: '0-0', name: 'Jacke', isChecked: true }] }];
     usePackingStore.setState({ categories: withCheck, isBasicList: false });

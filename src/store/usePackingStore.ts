@@ -13,6 +13,8 @@ type PackingState = {
   categories: PackingCategory[];
   // true, solange nur die Offline-Basisliste statt einer KI-Liste angezeigt wird.
   isBasicList: boolean;
+  // true, sobald die gespeicherte Liste aus AsyncStorage geladen ist.
+  hasHydrated: boolean;
   setDestination: (destination: string) => void;
   setStartDate: (startDate: string) => void;
   setDays: (days: number) => void;
@@ -34,6 +36,7 @@ export const usePackingStore = create<PackingState>()(
       weather: null,
       categories: [],
       isBasicList: false,
+      hasHydrated: false,
       setDestination: (destination) => set({ destination }),
       setStartDate: (startDate) => set({ startDate }),
       setDays: (days) => set({ days }),
@@ -41,8 +44,9 @@ export const usePackingStore = create<PackingState>()(
       // Eine echte Liste ersetzt auch die Basisliste.
       setPackingResult: (weather, categories) => set({ weather, categories, isBasicList: false }),
       // Nur wenn noch gar keine Liste da ist. Eine gespeicherte Liste wird nie überschrieben.
+      // Vor dem Laden ist categories nur scheinbar leer, darum erst danach.
       showBasicList: () => {
-        if (get().categories.length > 0) return;
+        if (!get().hasHydrated || get().categories.length > 0) return;
         set({ categories: createBasicPackingList(), isBasicList: true });
       },
       // Wieder online: Basisliste entfernen
@@ -70,11 +74,13 @@ export const usePackingStore = create<PackingState>()(
         weather: state.weather,
         categories: state.isBasicList ? [] : state.categories,
       }),
-      // gespeichertes Anreisedatum auf heute setzen
+      // Läuft nach dem Laden (auch bei Fehler): veraltetes Anreisedatum auf heute setzen,
+      // dann melden, dass die gespeicherte Liste da ist.
       onRehydrateStorage: () => (state) => {
         if (state && state.startDate < todayIso()) {
           state.setStartDate(todayIso());
         }
+        usePackingStore.setState({ hasHydrated: true });
       },
     }
   )

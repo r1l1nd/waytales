@@ -27,6 +27,7 @@ export default function PackScreen() {
     weather,
     categories,
     isBasicList,
+    hasHydrated,
     setDestination,
     setStartDate,
     setDays,
@@ -40,14 +41,15 @@ export default function PackScreen() {
   const [error, setError] = useState<string | null>(null);
 
   // Offline und noch keine Liste: Basisliste statt leerem Screen. Wieder online: Basisliste weg.
-  // categories.length steht drin, weil die gespeicherte Liste erst kurz nach dem Start geladen wird.
+  // Erst nach dem Laden entscheiden, sonst hält der Screen eine gespeicherte Liste für "keine Liste".
   useEffect(() => {
+    if (!hasHydrated) return;
     if (!isOnline && categories.length === 0) {
       showBasicList();
     } else if (isOnline && isBasicList) {
       clearBasicList();
     }
-  }, [isOnline, categories.length, isBasicList, showBasicList, clearBasicList]);
+  }, [hasHydrated, isOnline, categories.length, isBasicList, showBasicList, clearBasicList]);
 
   const isDisabled = !isOnline || isLoading;
   const totalCount = categories.reduce((sum, category) => sum + category.items.length, 0);
