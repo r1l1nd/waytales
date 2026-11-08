@@ -1,10 +1,10 @@
 import {
-  Outfit_400Regular,
-  Outfit_500Medium,
-  Outfit_600SemiBold,
-  Outfit_700Bold,
+  Poppins_400Regular,
+  Poppins_500Medium,
+  Poppins_600SemiBold,
+  Poppins_700Bold,
   useFonts,
-} from '@expo-google-fonts/outfit';
+} from '@expo-google-fonts/poppins';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
@@ -16,10 +16,10 @@ SplashScreen.preventAutoHideAsync();
 export default function RootLayout() {
   // Nur die Stärken laden, die die App wirklich nutzt. Jede weitere kostet Startzeit.
   const [fontsLoaded, fontError] = useFonts({
-    Outfit_400Regular,
-    Outfit_500Medium,
-    Outfit_600SemiBold,
-    Outfit_700Bold,
+    Poppins_400Regular,
+    Poppins_500Medium,
+    Poppins_600SemiBold,
+    Poppins_700Bold,
   });
 
   // Auch bei einem Fehler weitermachen: Dann zeigt die App eben die Systemschrift.

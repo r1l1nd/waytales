@@ -1,7 +1,7 @@
 import { StyleSheet, Text, type TextProps, type TextStyle } from 'react-native';
 import { FONTS } from '../constants/fonts';
 
-// Jede Outfit-Stärke ist eine eigene Schriftdatei. Darum wird aus fontWeight die passende Datei.
+// Jede Poppins-Stärke ist eine eigene Schriftdatei. Darum wird aus fontWeight die passende Datei.
 function fontForWeight(weight: TextStyle['fontWeight']): string {
   switch (String(weight)) {
     case '500':
