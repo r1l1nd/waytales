@@ -31,6 +31,7 @@ export default function SavedScreen() {
       <FlatList
         data={stories}
         keyExtractor={(story) => story.id}
+        contentContainerStyle={styles.listContent}
         renderItem={({ item }) => (
           <StoryListItem
             story={item}
@@ -50,7 +51,8 @@ export default function SavedScreen() {
 }
 
 const styles = StyleSheet.create({
-  screen: { flex: 1 },
+  screen: { flex: 1, backgroundColor: COLORS.surface },
+  listContent: { padding: 16, gap: 12 },
   centered: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 16 },
   emptyText: { fontSize: 16, color: COLORS.textMuted, textAlign: 'center' },
 });
