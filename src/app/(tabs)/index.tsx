@@ -1,6 +1,7 @@
 import { SymbolView } from 'expo-symbols';
 import { useState } from 'react';
 import { ActivityIndicator, Alert, Pressable, StyleSheet, View } from 'react-native';
+import { AiBubble } from '../../components/AiBubble';
 import { AppText } from '../../components/AppText';
 import { OfflineBanner } from '../../components/OfflineBanner';
 import { StoryModal } from '../../components/StoryModal';
@@ -81,15 +82,17 @@ export default function HomeScreen() {
           accessibilityRole="button"
           accessibilityLabel="Geschichte zum aktuellen Standort erzählen"
         >
-          {isBusy ? (
-            <ActivityIndicator size="large" color={COLORS.primary} />
-          ) : (
-            <SymbolView
-              name={{ ios: 'location.fill', android: 'location_on', web: 'location_on' }}
-              size={64}
-              tintColor={COLORS.primary}
-            />
-          )}
+          <AiBubble>
+            {isBusy ? (
+              <ActivityIndicator size="large" color={COLORS.primary} />
+            ) : (
+              <SymbolView
+                name={{ ios: 'location.fill', android: 'location_on', web: 'location_on' }}
+                size={64}
+                tintColor={COLORS.primary}
+              />
+            )}
+          </AiBubble>
         </Pressable>
 
         <AppText style={styles.hint}>
@@ -130,16 +133,8 @@ const styles = StyleSheet.create({
     gap: 24,
   },
   location: { fontSize: 16, color: COLORS.text, textAlign: 'center' },
-  gpsButton: {
-    width: 180,
-    height: 180,
-    borderRadius: 90,
-    borderWidth: 3,
-    borderColor: COLORS.primary,
-    backgroundColor: COLORS.primaryLight,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
+  // Rund, damit Tippen nur auf der Blase zählt und nicht in den Ecken daneben.
+  gpsButton: { borderRadius: 90 },
   gpsButtonDisabled: { opacity: 0.4 },
   gpsButtonPressed: { opacity: 0.7 },
   hint: { fontSize: 14, color: COLORS.textMuted, textAlign: 'center' },
