@@ -1,3 +1,4 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import type { PackingCategory } from '../src/models';
 import { usePackingStore } from '../src/store/usePackingStore';
 
@@ -44,5 +45,27 @@ describe('usePackingStore.toggleItem', () => {
       ['0-1', false],
       ['1-0', true],
     ]);
+  });
+});
+
+describe('Offline-Basisliste', () => {
+  it('überschreibt eine vorhandene Liste samt Häkchen nicht', () => {
+    const withCheck = [{ categoryName: 'Kleidung', items: [{ id: '0-0', name: 'Jacke', isChecked: true }] }];
+    usePackingStore.setState({ categories: withCheck, isBasicList: false });
+
+    usePackingStore.getState().showBasicList();
+
+    expect(usePackingStore.getState().categories).toEqual(withCheck);
+    expect(usePackingStore.getState().isBasicList).toBe(false);
+  });
+
+  it('zeigt die Basisliste an, speichert sie aber nicht', async () => {
+    usePackingStore.setState({ categories: [], isBasicList: false });
+
+    usePackingStore.getState().showBasicList();
+
+    expect(usePackingStore.getState().categories.length).toBeGreaterThan(0);
+    const saved = JSON.parse((await AsyncStorage.getItem('packing-storage'))!);
+    expect(saved.state.categories).toEqual([]);
   });
 });
