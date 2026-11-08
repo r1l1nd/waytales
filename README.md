@@ -53,7 +53,7 @@ Die vollständige Projektspezifikation inkl. Changelog der Abweichungen wurde ü
 
 | # | User Story | Umgesetzt in | Tests |
 |---|---|---|---|
-| 1 | Stilauswahl | `src/components/StyleDropdown.tsx`, `src/store/useSettingsStore.ts`, `src/constants/styles.ts`, `src/app/(tabs)/index.tsx` | `prompts.test.ts` |
+| 1 | Stilauswahl | `src/components/StyleDropdown.tsx`, `src/store/useSettingsStore.ts`, `src/constants/styles.ts`, `src/app/(tabs)/index.tsx` | `StyleDropdown.test.tsx`, `prompts.test.ts` |
 | 2 | Geschichte generieren | `src/app/(tabs)/index.tsx`, `src/components/StoryModal.tsx`, `src/hooks/useLocation.ts`, `src/services/locationService.ts`, `src/services/aiService.ts`, `src/constants/prompts.ts`, `src/utils/errorMessages.ts` | `aiService.test.ts`, `prompts.test.ts`, `locationService.test.ts`, `useLocation.test.ts` |
 | 3 | Vorlesen | `src/components/SpeakButton.tsx`, `src/hooks/useSpeech.ts`, `src/services/ttsService.ts`, `src/components/StoryModal.tsx`, `src/app/story-detail.tsx` | – |
 | 4 | Geschichte speichern | `src/components/StoryModal.tsx`, `src/store/useStoryStore.ts`, `src/services/storageService.ts` | `StoryModal.test.tsx`, `useStoryStore.test.ts`, `storageService.test.ts` |
@@ -73,7 +73,7 @@ Die vollständige Projektspezifikation inkl. Changelog der Abweichungen wurde ü
 | Externe Datenquelle | Google Gemini, Open-Meteo Geocoding und Forecast |
 | ≥ 1 Device-Capability | GPS (`expo-location`), Sprachausgabe (`expo-speech`), Netzwerkstatus (`expo-network`) |
 | Lokale Persistenz, Kern funktioniert offline | AsyncStorage über Zustand `persist`; gespeicherte Geschichten und Packliste offline nutzbar |
-| Basis-Tests | 82 Tests in 13 Dateien (Jest + React Native Testing Library) |
+| Basis-Tests | 87 Tests in 14 Dateien (Jest + React Native Testing Library) |
 | Stabil auf Gerät / Emulator | Getestet auf iPhone und Android-Emulator, siehe [Getestete Plattformen](#getestete-plattformen) |
 
 ---
@@ -304,7 +304,7 @@ Schlägt das Erstellen einer neuen Packliste fehl, bleibt die alte Liste samt H�
 npm test
 ```
 
-**82 Tests in 13 Dateien** – Unit-Tests für die Business-Logik und Komponententests aus Sicht der Nutzer:innen. Externe Systeme (Gemini, Open-Meteo, GPS, Sprachausgabe, AsyncStorage) werden gemockt, es wird kein echtes Netzwerk verwendet.
+**87 Tests in 14 Dateien** – Unit-Tests für die Business-Logik und Komponententests aus Sicht der Nutzer:innen. Externe Systeme (Gemini, Open-Meteo, GPS, Sprachausgabe, AsyncStorage) werden gemockt, es wird kein echtes Netzwerk verwendet.
 
 | Datei | Was wird geprüft? |
 |---|---|
@@ -317,10 +317,11 @@ npm test
 | `useLocation.test.ts` | Ablauf über mehrere Versuche: abgelehnt → dauerhaft abgelehnt → in den Einstellungen erlaubt |
 | `useNetworkStatus.test.ts` | Online/Offline-Erkennung inkl. unbekanntem Zustand beim Start |
 | `useStoryStore.test.ts` | Speichern (neueste zuerst), keine Duplikate, Löschen, nur Geschichten werden persistiert |
-| `usePackingStore.test.ts` | Häkchen setzen/entfernen, Offline-Basisliste überschreibt nichts und wird nicht gespeichert |
+| `usePackingStore.test.ts` | Häkchen setzen/entfernen, Offline-Basisliste erst nach dem Laden, überschreibt nichts und wird nicht gespeichert |
 | `storageService.test.ts` | Schreiben, Lesen und Löschen über AsyncStorage |
 | `mapService.test.ts` | Karten-Link für iOS und Android, korrekt kodierte Ortsnamen |
 | `StoryModal.test.tsx` | Speichern-Button: „Speichern“ → „Gespeichert“, keine doppelte Speicherung |
+| `StyleDropdown.test.tsx` | Stil-Dropdown: zeigt den gewählten Stil, öffnet die Liste, meldet die neue Auswahl und schließt |
 
 <!-- SCREENSHOT (optional): Terminal-Ausgabe von "npm test" mit allen grünen Tests.
      Datei z. B. docs/screenshots/tests.png -->
