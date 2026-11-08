@@ -1,3 +1,5 @@
+import { AxiosError } from 'axios';
+
 // Im Test gibt es kein echtes Netzwerk, der Client liefert, was wir vorgeben.
 // Simulierte Funktion
 const mockGet = jest.fn();
@@ -132,5 +134,20 @@ describe('getForecast', () => {
     const { getForecast } = loadWeatherService(false);
 
     await expect(getForecast(request)).rejects.toThrow('EXPO_PUBLIC_FORECAST_API_URL fehlt in der .env');
+  });
+});
+
+describe('Netzfehler', () => {
+  const request = { latitude: 48.2, longitude: 16.37, startDate: '2026-11-01', endDate: '2026-11-02' };
+
+  // Der Fehler muss beim Pack-Screen ankommen, sonst zeigt er fälschlich "Ort nicht gefunden".
+  it.each([
+    ['geocodePlace', (service: WeatherService) => service.geocodePlace('Wien')],
+    ['getForecast', (service: WeatherService) => service.getForecast(request)],
+  ])('%s gibt den Fehler weiter, statt ihn zu verschlucken', async (_name, call) => {
+    const networkError = new AxiosError('Network Error', 'ERR_NETWORK');
+    mockGet.mockRejectedValue(networkError);
+
+    await expect(call(loadWeatherService(true))).rejects.toBe(networkError);
   });
 });
