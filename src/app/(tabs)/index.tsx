@@ -127,8 +127,9 @@ const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: COLORS.background },
   container: {
     flex: 1,
+    // Spalte: justifyContent = senkrecht, alignItems = waagrecht.
+    justifyContent: 'center',
     alignItems: 'center',
-    paddingTop: 48,
     paddingHorizontal: 16,
     gap: 24,
   },
