@@ -76,4 +76,12 @@ describe('isWithinForecastRange', () => {
   it('akzeptiert heute', () => {
     expect(isWithinForecastRange('2026-10-26', today)).toBe(true);
   });
+
+  it('rechnet über den Jahreswechsel richtig', () => {
+    // Heute ist der 20.12.2026 (11 = Dezember), letzter Tag ist der 04.01.2027.
+    const beforeNewYear = new Date(2026, 11, 20);
+
+    expect(isWithinForecastRange('2027-01-04', beforeNewYear)).toBe(true);
+    expect(isWithinForecastRange('2027-01-05', beforeNewYear)).toBe(false);
+  });
 });
