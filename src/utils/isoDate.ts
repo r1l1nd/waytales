@@ -1,5 +1,7 @@
 // Datum als yyyy-mm-dd in lokaler Zeit, so erwartet es Open-Meteo.
 export function toIsoDate(date: Date): string {
+  // .padStart(2, '0') ergänzt vorne eine 0, wenn der Text kürzer als zwei Zeichen ist.
+  // Beispiel: Aus dem Monat 3 wird "03".
   const month = String(date.getMonth() + 1).padStart(2, '0');
   const day = String(date.getDate()).padStart(2, '0');
   return `${date.getFullYear()}-${month}-${day}`;

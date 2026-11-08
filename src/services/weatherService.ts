@@ -1,6 +1,7 @@
 import { createMockForecast, MOCK_PLACE, USE_MOCK_WEATHER } from '../constants/mockWeather';
 import { MAX_FORECAST_DAYS } from '../constants/weather';
 import type { Weather } from '../models';
+import { toIsoDate } from '../utils/isoDate';
 import { createHttpClient } from './httpClient';
 
 const geocodingUrl = process.env.EXPO_PUBLIC_GEOCODING_API_URL;
@@ -104,14 +105,6 @@ export async function getForecast({
     precipitation: daily.precipitation_sum[index],
     weatherCode: daily.weather_code[index],
   }));
-}
-
-function toIsoDate(date: Date) {
-  // .padStart(2, '0') ergänzt vorne eine 0, wenn der Text kürzer als zwei Zeichen ist.
-  // Beispiel: Aus dem Monat 3 wird "03".
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
-  return `${date.getFullYear()}-${month}-${day}`;
 }
 
 // Prüft, ob das Reiseende (yyyy-mm-dd) noch innerhalb der möglichen Vorhersage liegt.
